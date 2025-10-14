@@ -12,11 +12,15 @@ mesas = [[0,"",False,0],[0,"",True,0],[0,"",True,0],[0,"",True,0],[0,"",True,0]]
 mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
 pedidos = [] #* xd? (creo q era solo para cumplir con consigna semana 2)
 
-from utils.isMesaValid import isMesaValid
+# from utils.isMesaValid import isMesaValid
 from utils.isMozoValid import isMozoValid
-from utils.isMesaEmpty import isMesaEmpty
+# from utils.isMesaEmpty import isMesaEmpty
 
+from functions.mesas.validations import *
 from functions.mesas.levantarMesa import levantarMesa
+from functions.mesas.cobrarMesa import cobrarMesa
+from functions.mesas.anularMesa import anularMesa
+from functions.mesas.moverMesa import moverMesa
 
 
 while app:
@@ -126,52 +130,31 @@ while app:
                             if noErrors == True:
                                 mesas[table-1][0] = waiter
                 elif choice == "5": #! Cambiar breaks por whiles o por algo que no me devuelva al menu de "Ver Salon" y "Ver Delivery"
-                            print("Mover Mesa")
-                            tableOld = int(input("Seleccione la mesa a mover: ")) - 1
+                    moverMesa(mesas)
+                            # print("Mover Mesa")
+                            # tableOld = int(input("Seleccione la mesa a mover: ")) - 1
 
-                            if mesas[tableOld][2] == True:
-                                print("Mesa a mover vacia")
-                                break
+                            # if mesas[tableOld][2] == True:
+                            #     print("Mesa a mover vacia")
+                            #     break
 
-                            tableNew = int(input("Seleccione la mesa destino: ")) - 1
+                            # tableNew = int(input("Seleccione la mesa destino: ")) - 1
 
-                            if mesas[tableNew][2] == False:
-                                print("Mesa destino ocupada")
-                                break
+                            # if mesas[tableNew][2] == False:
+                            #     print("Mesa destino ocupada")
+                            #     break
 
-                            mesas[tableNew] = mesas[tableOld]
-                            mesas[tableOld] = [0,"",True,0]
+                            # mesas[tableNew] = mesas[tableOld]
+                            # mesas[tableOld] = [0,"",True,0]
 
                 elif choice == "6":
                             print("Convertir Delivery/Salon")
                             table = int(input("Seleccione la mesa a convertir: "))
                             print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, etc)")
                 elif choice == "7":
-                            print("Cobrar Mesa")
-                            isValid=True
-
-                            table = int(input("Seleccione la mesa a cobrar: "))
-
-                            isValid = isMesaValid(mesas,table)
-                            if isValid == False:
-                                print("Mesa no encontrada")
-                            #! Individualizar validaciones.
-                            if isValid:
-                                isEmpty = isMesaEmpty(mesas,table)
-                                if isEmpty:
-                                    isValid=False
-                            
-                            if isValid:
-                                mesas[table-1] = [0,"",True,0]
-                                print("Mesa cobrada exitosamente")
-
-                            elif isValid == False:
-                                print("Error al cobrar mesa")
-                            # Funcion para cobrar mesa, guardando los datos correspondientes (mozo, stock, caja, etc)
+                    cobrarMesa(mesas)
                 elif choice == "8":
-                            print("Anular Mesa")
-                            table = int(input("Seleccione la mesa a anular: ")) - 1
-                            print("Funcion para ANULAR mesa, guardando los datos correspondientes (mozo, stock, caja, etc)")
+                    anularMesa(mesas)
                 elif choice == "X" or choice == "x":
                             print("Volver al menu anterior")
                             salonMenu=False
