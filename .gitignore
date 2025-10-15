@@ -1,0 +1,16 @@
+# Caches genéricos
+__pycache__
+**/__pycache__/
+**/.cache/
+**/*cache*/      # opcional: cualquier carpeta que contenga "cache"
+
+# Caches comunes en Python
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.ipynb_checkpoints/
+
+# Bytecode Python
+**/*.pyc
+**/*.pyo
+**/*.pyd
