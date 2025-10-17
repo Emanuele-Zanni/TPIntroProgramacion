@@ -3,28 +3,27 @@ mainMenu=True
 mesasMenu=False
 mozosMenu=False
 stockMenuVar=False
-mozos=["mozo1","mozo2","mozo3"]
 
-mesas = [[0,"",False,0],[0,"",True,0],[0,"",True,0],[0,"",True,0],[0,"",True,0]]
-
-productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30],[4,"producto4",400,40],[5,"producto5",500,50]]
-#*[mozoAsignado,"Pedidos",Disponible?,MontoAPagar] (num de mesa = posicion en Lista)
 #? Mesas manejadas como una Lista de LISTAS
+mesas = [[0,"",False,0],[0,"",True,0],[0,"",True,0],[0,"",True,0],[0,"",True,0]] #*[mozoAsignado,"Pedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
+mozos=["mozo1","mozo2","mozo3"]  
+productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30],[4,"producto4",400,40],[5,"producto5",500,50]]
+
+
 
 mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
 pedidos = [] #* xd? (creo q era solo para cumplir con consigna semana 2)
 
-# from utils.isMesaValid import isMesaValid
-from utils.isMozoValid import isMozoValid
-# from utils.isMesaEmpty import isMesaEmpty
+#******* Importaciones *********
+from Stock.menus import *
 
-from functions.mesas.validations import *
-from functions.mesas.levantarMesa import levantarMesa
-from functions.mesas.cobrarMesa import cobrarMesa
-from functions.mesas.anularMesa import anularMesa
-from functions.mesas.moverMesa import moverMesa
+from Mesas.functions import *
+from Stock.functions import *
 
-from functions.stock.stockMenu import *
+from Mesas.validations import *
+from Stock.validations import *
+from Mozos.validations import *
+#*******************************
 
 
 while app:

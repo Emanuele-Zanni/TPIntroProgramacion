@@ -1,4 +1,4 @@
-from functions.stock.funciones import *
+from Stock.functions import *
 
 def stockMenu(listaProductos):
     on = True
