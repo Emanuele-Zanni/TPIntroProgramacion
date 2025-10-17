@@ -13,8 +13,9 @@ def addProducto(listaProductos):
     print(f"{nombre} fue agregado.")
 
 def editProduct(listaProductos):
-    codigo = input("Ingrese codigo de producto a editar:")
+    codigo = int(input("Ingrese codigo de producto a editar:"))
     for producto in listaProductos:
+        print(producto)
         if producto[0] == codigo:
             print(f"1. Código: {producto[0]}")
             print(f"2. Nombre: {producto[1]}")
@@ -40,7 +41,7 @@ def editProduct(listaProductos):
 
     return listaProductos
 
-        
+ 
 def deleteProduct(listaProductos):
     codigo = int(input("Ingrese codigo de producto a eliminar:"))
     #* Agregar confirmacion para delete
@@ -57,6 +58,7 @@ def getProduct(listaProductos, codigo):
         if producto[0] == codigo:
             print(f"El precio de {producto[1]} es {producto[2]}")
             return producto
-        else:
-            return print(f"Producto con codigo {codigo} no encontrado.")
+
+    print(f"Producto con codigo {codigo} no encontrado.")
+    return ""
         

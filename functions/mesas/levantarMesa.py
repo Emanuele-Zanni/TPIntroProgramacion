@@ -1,7 +1,8 @@
 from utils.isMesaValid import isMesaValid
 from utils.isMozoValid import isMozoValid
+from functions.stock.funciones import *
 
-def levantarMesa(listaMesas,listaMozos):
+def levantarMesa(listaMesas,listaMozos,listaProductos):
             pedidosMesa = []
             mesaValida=False
             mozoValido=False
@@ -20,14 +21,19 @@ def levantarMesa(listaMesas,listaMozos):
 
                 mozoValido = isMozoValid(listaMozos,numMozo)
 
-            item = "placeholder"
-            while item != "":
-                item = input("Ingrese un item o ingrese enter vacio para finalizar la carga: ")
-                if item!= "":
-                    pedidosMesa.append(item)
-                else:
+            item = 1
+            total = 0
+            producto = ""
+            codigo = 0
+            while codigo != -1:
+                codigo = int(input("Ingrese el codigo del item a cargar (-1 para finalizar): "))
+                producto = getProduct(listaProductos,codigo)
+                if producto!= "":
+                    pedidosMesa.append(producto[0])
+                    total += producto[2]
+                elif codigo == -1:
                     print("Mesa Levantada exitosamente!")
                 
-            #* Esto reemplazar por funcion LevantarMesa()
-            listaMesas[numMesa-1] = [numMozo,pedidosMesa,False,0] #* usar listaMozos[numMozo-1] para guardar el nombre del mozo en vez del num
+            
+            listaMesas[numMesa-1] = [numMozo,pedidosMesa,False,total] #* usar listaMozos[numMozo-1] para guardar el nombre del mozo en vez del num
         

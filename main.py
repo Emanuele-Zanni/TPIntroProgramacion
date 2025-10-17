@@ -7,7 +7,7 @@ mozos=["mozo1","mozo2","mozo3"]
 
 mesas = [[0,"",False,0],[0,"",True,0],[0,"",True,0],[0,"",True,0],[0,"",True,0]]
 
-productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30],[4,"producto4",400,40]]
+productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30],[4,"producto4",400,40],[5,"producto5",500,50]]
 #*[mozoAsignado,"Pedidos",Disponible?,MontoAPagar] (num de mesa = posicion en Lista)
 #? Mesas manejadas como una Lista de LISTAS
 
@@ -30,11 +30,11 @@ from functions.stock.stockMenu import *
 while app:
     while mainMenu:
         print("""
-    1)Mesas (Casi hecho)
-    2)Mozos (FALTA)
+    1)Mesas (WIP 90%)
+    2)Mozos (NO HECHO)
     3)Stock (WIP)
-    4)Cajas (FALTA)
-    5)Finalizar Dia (FALTA)
+    4)Cajas (NO HECHO)
+    5)Finalizar Dia (NO HECHO)
     """)
 
         choice=input("Ingrese una opcion: ")
@@ -68,7 +68,7 @@ while app:
     while mesasMenu:
         print("""
         1)Ver Salon
-        2)Ver Delivery
+        2)Ver Delivery (NO HECHO)
         X)Volver al menu anterior
         """)
     
@@ -80,21 +80,21 @@ while app:
                 #! Mostrar Mesas Salon + Mesas Delivery automaticamente arriba del Menu????
                 # print: 3Mover mesa, 2Cambiar Mozo, 1Editar Pedidos, 5Cobrar Mesa,6 Anular Mesa, 4Convertir a Delivery/Salon
                 print("""
-            1)Ver Mesas (Mapeado automaticamente arriba del menu??) / Seleccionar Mesa
+            1)Ver Mesas
             2)Levantar Mesa
-            3)Editar Mesa (Implicito dentro de "Seleccionar Mesa"?)
-            4)Cambiar Mozo (Dentro de "Seleccionar Mesa"?) X
-            5)Mover Mesa (Dentro y Fuera de "Seleccionar Mesa")
+            3)Editar Mesa (Reemplazar por Modificar Mesa? == Seleccionar Mesa)
+            4)Cambiar Mozo (Dentro de "Seleccionar Mesa"?)
+            5)Mover Mesa
             6)Convertir Delivery/Salon (Dentro de "Seleccionar Mesa")
-            7)Cobrar Mesa (Dentro y Fuera de "Seleccionar Mesa")
-            8)Anular Mesa (Dentro y Fuera de "Seleccionar Mesa")
+            7)Cobrar Mesa (falta CAJA)
+            8)Anular Mesa (falta CAJA)
             X)Volver al menu anterior
             """)
                 choice=input("Ingrese una opcion: ")
                 if choice == "1":
                     print(mesas)
                 elif choice == "2":
-                    levantarMesa(mesas,mozos)
+                    levantarMesa(mesas,mozos,productos)
                 elif choice == "3":
                     print("Editar Mesa")
                     print("Mesa especifica DATOS")
