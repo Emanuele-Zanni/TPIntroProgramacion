@@ -6,7 +6,7 @@ def levantarMesa(listaMesas,listaMozos,listaProductos):
             pedidosMesa = []
             mesaValida=False
             mozoValido=False
-            pedidoValido=False
+            pedidoValido=False #* ???
             #* Type Mesa = NumeroMesa,MozoAsignado,"Pedidos",Disponible?(Boolean),MontoAPagar
 
             #* Validar Mesa con/sin funcion
@@ -22,17 +22,19 @@ def levantarMesa(listaMesas,listaMozos,listaProductos):
                 mozoValido = isMozoValid(listaMozos,numMozo)
 
             item = 1
-            total = 0
             producto = ""
             codigo = 0
+            # total = 0
             while codigo != -1:
                 codigo = int(input("Ingrese el codigo del item a cargar (-1 para finalizar): "))
                 producto = getProduct(listaProductos,codigo)
                 if producto!= "":
                     pedidosMesa.append(producto[0])
-                    total += producto[2]
+                    # total += producto[2]
                 elif codigo == -1:
                     print("Mesa Levantada exitosamente!")
+
+            total = calculateTotal(listaProductos,pedidosMesa)
                 
             
             listaMesas[numMesa-1] = [numMozo,pedidosMesa,False,total] #* usar listaMozos[numMozo-1] para guardar el nombre del mozo en vez del num
@@ -126,17 +128,19 @@ def moverMesa(mesas):
 def getMesa(listaMesas,mesa):
     return listaMesas[mesa-1]
 
-def printMesa(listaMesas):
+def printMesa(listaMesas,listaProductos):
     numMesa = int(input("Ingrese la mesa a visualizar:"))
     isReal = isMesaReal(listaMesas,numMesa)
     mesa = listaMesas[numMesa-1]
-    
-     #* Ordenar productos por codigo menor a mayor
+
+    products = printProducts(listaProductos,mesa[1]) #* Ordenar productos por codigo menor a mayor
+    # total = calculateTotal(listaProductos,mesa[1]) #* Calcular total de la mesa
+
 
     if isReal:
             print(f"1. Mozo: {mesa[0]}")
-            print(f"2. Pedidos: {mesa[1]}")
-            print(f"3. Disponibilidad: {mesa[2]}")
+            print(f"2. Pedidos: {products}")
+            print(f"3. Mesa disponible?: {mesa[2]}")
             print(f"4. Valor total de Productos: {mesa[3]}$")
 
     return listaMesas

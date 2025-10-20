@@ -56,32 +56,52 @@ def deleteProduct(listaProductos):
 def getProduct(listaProductos, codigo):
     for producto in listaProductos:
         if producto[0] == codigo:
-            print(f"El precio de {producto[1]} es {producto[2]}")
+            # print(f"El precio de {producto[1]} es {producto[2]}")
             return producto
 
     print(f"Producto con codigo {codigo} no encontrado.")
     return ""
 
-def printProducts(productos):
+def printProducts(listaProductos,codigos):
     uniqueProdList = []
-    for codigo in range(len(productos)):
-        if codigo not in uniqueProdList:
-            uniqueProdList.append(codigo)
+    for k in range(len(codigos)):
+        if codigos[k] not in uniqueProdList:
+            uniqueProdList.append(codigos[k])
+            # print(f"Codigo {codigos[k]} guardado en lista")
 
     results = []
-    quantity = 1
+    quantity = 0
     for i in range(len(uniqueProdList)):
-        for j in range(len(productos)):
-            if uniqueProdList[i] == productos[j]:
-                print(uniqueProdList[i])
+        for j in range(len(codigos)):
+            if uniqueProdList[i] == codigos[j]:
+                # print(uniqueProdList[i])
                 quantity += 1
 
-            if j == len(productos) - 1:
+            if j == len(codigos) - 1:
                 aux = [uniqueProdList[i], quantity]
                 results.append(aux)
-                quantity = 1
-                print("UniqueProdList: ",uniqueProdList[i])
-                print(results)  
+                quantity = 0
+                # print("UniqueProdList: ",uniqueProdList[i])
+                # print(results)  
+
+    # print("Print Products:")
+    text = ""
+    for i in range(len(results)):
+        item = getProduct(listaProductos, results[i][0]) #* Obtiene el producto de la lista orginal para mostrar el nombre
+        # print(f"{item[1]} x {results[i][1]} unidades") 
+        text += f"\n{item[1]} x {results[i][1]} unidades == {item[2] * results[i][1]}$"
+    
+    return text
+
+def calculateTotal(listaProductos, codigos):
+    total = 0
+    for i in range(len(codigos)):
+        item = getProduct(listaProductos, codigos[i]) #* Obtiene el producto de la lista orginal para mostrar el nombre
+        total += item[2] #* Suma el precio del producto al total
+    return total
+
+
+    
 
 
         

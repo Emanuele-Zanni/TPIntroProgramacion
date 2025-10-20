@@ -5,7 +5,7 @@ mozosMenu=False
 stockMenuVar=False
 
 #? Mesas manejadas como una Lista de LISTAS
-mesas = [[0,"",False,0],[0,"",True,0],[0,"",True,0],[0,"",True,0],[0,"",True,0]] #*[mozoAsignado,"Pedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
+mesas = [[0,[3,1,1,2,2,1,4,4,5,3,3,1,2,1,2],False,3500],[0,"",True,0],[0,"",True,0],[0,"",True,0],[0,"",True,0]] #*[mozoAsignado,"ListaPedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
 mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
 
 mozos=["mozo1","mozo2","mozo3"] 
@@ -13,7 +13,7 @@ productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30
 
 pedidos = [] #* xd? (creo q era solo para cumplir con consigna semana 2)
 
-numbers = [1,1,2,2,3,5,1824,122,1,6,9,99,1111,111,1,1,2]
+numbers = [3,1,1,2,2,1,4,4,5,3,3,1,2,1,2]
 
 #******* Importaciones *********
 from Stock.menus import *
@@ -45,7 +45,7 @@ while app:
             mainMenu=False
         elif choice=="2":
             print("Mozos")
-            printProducts(numbers)
+            printProducts(productos,numbers)
             # mozosMenu=True
             # mainMenu=False
         elif choice=="3":
@@ -97,7 +97,7 @@ while app:
                 elif choice == "2":
                     levantarMesa(mesas,mozos,productos)
                 elif choice == "3":
-                    printMesa(mesas)
+                    printMesa(mesas,productos)
                 elif choice == "4":
                             print("Cambiar Mozo")
                             noErrors=True
