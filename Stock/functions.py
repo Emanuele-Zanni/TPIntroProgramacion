@@ -61,4 +61,29 @@ def getProduct(listaProductos, codigo):
 
     print(f"Producto con codigo {codigo} no encontrado.")
     return ""
+
+def printProducts(productos):
+    uniqueProdList = []
+    for codigo in range(len(productos)):
+        if codigo not in uniqueProdList:
+            uniqueProdList.append(codigo)
+
+    results = []
+    quantity = 1
+    for i in range(len(uniqueProdList)):
+        for j in range(len(productos)):
+            if uniqueProdList[i] == productos[j]:
+                print(uniqueProdList[i])
+                quantity += 1
+
+            if j == len(productos) - 1:
+                aux = [uniqueProdList[i], quantity]
+                results.append(aux)
+                quantity = 1
+                print("UniqueProdList: ",uniqueProdList[i])
+                print(results)  
+
+
         
+
+    

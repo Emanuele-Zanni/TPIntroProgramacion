@@ -6,13 +6,14 @@ stockMenuVar=False
 
 #? Mesas manejadas como una Lista de LISTAS
 mesas = [[0,"",False,0],[0,"",True,0],[0,"",True,0],[0,"",True,0],[0,"",True,0]] #*[mozoAsignado,"Pedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
-mozos=["mozo1","mozo2","mozo3"]  
+mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
+
+mozos=["mozo1","mozo2","mozo3"] 
 productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30],[4,"producto4",400,40],[5,"producto5",500,50]]
 
-
-
-mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
 pedidos = [] #* xd? (creo q era solo para cumplir con consigna semana 2)
+
+numbers = [1,1,2,2,3,5,1824,122,1,6,9,99,1111,111,1,1,2]
 
 #******* Importaciones *********
 from Stock.menus import *
@@ -44,8 +45,9 @@ while app:
             mainMenu=False
         elif choice=="2":
             print("Mozos")
-            mozosMenu=True
-            mainMenu=False
+            printProducts(numbers)
+            # mozosMenu=True
+            # mainMenu=False
         elif choice=="3":
             print("Stock")
             stockMenuVar=True
@@ -81,7 +83,7 @@ while app:
                 print("""
             1)Ver Mesas
             2)Levantar Mesa
-            3)Editar Mesa (Reemplazar por Modificar Mesa? == Seleccionar Mesa)
+            3)Seleccionar Mesa
             4)Cambiar Mozo (Dentro de "Seleccionar Mesa"?)
             5)Mover Mesa
             6)Convertir Delivery/Salon (Dentro de "Seleccionar Mesa")
@@ -95,9 +97,7 @@ while app:
                 elif choice == "2":
                     levantarMesa(mesas,mozos,productos)
                 elif choice == "3":
-                    print("Editar Mesa")
-                    print("Mesa especifica DATOS")
-                    print("Menu de opciones GLOBALES (opciones previas) + ESPECIFICAS DE MESA")
+                    printMesa(mesas)
                 elif choice == "4":
                             print("Cambiar Mozo")
                             noErrors=True

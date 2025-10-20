@@ -122,3 +122,24 @@ def moverMesa(mesas):
         mesas[tableOld] = [0,"",True,0]
 
     return mesas
+
+def getMesa(listaMesas,mesa):
+    return listaMesas[mesa-1]
+
+def printMesa(listaMesas):
+    numMesa = int(input("Ingrese la mesa a visualizar:"))
+    isReal = isMesaReal(listaMesas,numMesa)
+    mesa = listaMesas[numMesa-1]
+    
+     #* Ordenar productos por codigo menor a mayor
+
+    if isReal:
+            print(f"1. Mozo: {mesa[0]}")
+            print(f"2. Pedidos: {mesa[1]}")
+            print(f"3. Disponibilidad: {mesa[2]}")
+            print(f"4. Valor total de Productos: {mesa[3]}$")
+
+    return listaMesas
+
+
+
