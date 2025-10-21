@@ -89,7 +89,7 @@ def printProducts(listaProductos,codigos):
     for i in range(len(results)):
         item = getProduct(listaProductos, results[i][0]) #* Obtiene el producto de la lista orginal para mostrar el nombre
         # print(f"{item[1]} x {results[i][1]} unidades") 
-        text += f"\n{item[1]} x {results[i][1]} unidades == {item[2] * results[i][1]}$"
+        text += f"\n- {item[1]} x {results[i][1]} == {item[2] * results[i][1]}$"
     
     return text
 

@@ -1,22 +1,24 @@
 app=True
-mainMenu=True
-mesasMenu=False
+mainMenuVar=True
+mesasMenuVar=False
 mozosMenu=False
 stockMenuVar=False
+cajasMenuVar=False
 
 #? Mesas manejadas como una Lista de LISTAS
-mesas = [[0,[3,1,1,2,2,1,4,4,5,3,3,1,2,1,2],False,3500],[0,"",True,0],[0,"",True,0],[0,"",True,0],[0,"",True,0]] #*[mozoAsignado,"ListaPedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
+mesas = [[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0]] #*[mozoAsignado,"ListaPedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
 mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
+statsMesas = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+#* MESA PARTICULAR: Veces levantada, plata recaudada, plata anulada, productos anulados, productos cargados, mozosAsignados(array con numero de 
+#* mozo + cantidad de veces que trabajaron en la mesa)
+#* GENERALES: Mesas Movidas, Cambios de Mozo, [Mesas Cobradas, Mesas Anuladas, Productos Anulados, Productos Cargados] (Salon y Delivery),  
 
 mozos=["mozo1","mozo2","mozo3"] 
 productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30],[4,"producto4",400,40],[5,"producto5",500,50]]
 
-pedidos = [] #* xd? (creo q era solo para cumplir con consigna semana 2)
-
-numbers = [3,1,1,2,2,1,4,4,5,3,3,1,2,1,2]
-
 #******* Importaciones *********
 from Stock.menus import *
+from Mesas.menus import *
 
 from Mesas.functions import *
 from Stock.functions import *
@@ -28,111 +30,60 @@ from Mozos.validations import *
 
 
 while app:
-    while mainMenu:
-        print("""
-    1)Mesas (WIP 90%)
-    2)Mozos (NO HECHO)
-    3)Stock (WIP)
-    4)Cajas (NO HECHO)
-    5)Finalizar Dia (NO HECHO)
-    """)
-
+    while mainMenuVar: #* Main Menu
+        mainMenu()
         choice=input("Ingrese una opcion: ")
 
-        if choice=="1":
-            print("Mesas")
-            mesasMenu=True
-            mainMenu=False
-        elif choice=="2":
-            print("Mozos")
-            printProducts(productos,numbers)
-            # mozosMenu=True
-            # mainMenu=False
-        elif choice=="3":
-            print("Stock")
+        if choice=="1": #* Mesas
+            mesasMenuVar=True
+            mainMenuVar=False
+        elif choice=="2": #* Mozos
+            mozosMenu=True
+            mainMenuVar=False
+        elif choice=="3": #* Stock
             stockMenuVar=True
-            mainMenu=False
-        elif choice=="4":
-            print("Cajas")
-        elif choice=="5":
+            mainMenuVar=False
+        elif choice=="4": #* Cajas
+            cajasMenuVar
+            mainMenuVar=False
+        elif choice=="5": #* Finalizar Dia o Config??
             print("Finalizar Dia")
-            mainMenu=False
+            mainMenuVar=False
         else:
             print("Opcion invalida")
 
-    #* Submenu Mesas
-    #* 1) Levantar Mesa 
-    #* 2) Editar/Acceder Mesa => submenu => Mover Mesa, Cambiar Mozo, Editar Pedidos, Cobrar Mesa, Anular Mesa, Convertir a Delivery
-    #* 3) Cobrar Mesa
-    #* 4) Anular Mesa
-
-    while mesasMenu:
-        print("""
-        1)Ver Salon
-        2)Ver Delivery (NO HECHO)
-        X)Volver al menu anterior
-        """)
-    
+    while mesasMenuVar: #* Mesas Menu
+        mesasMenu()
         choice=input("Ingrese una opcion: ")
 
         if choice=="1":
-            salonMenu=True
-            while salonMenu:
+            salonMenuVar=True
+            while salonMenuVar:
                 #! Mostrar Mesas Salon + Mesas Delivery automaticamente arriba del Menu????
                 # print: 3Mover mesa, 2Cambiar Mozo, 1Editar Pedidos, 5Cobrar Mesa,6 Anular Mesa, 4Convertir a Delivery/Salon
-                print("""
-            1)Ver Mesas
-            2)Levantar Mesa
-            3)Seleccionar Mesa
-            4)Cambiar Mozo (Dentro de "Seleccionar Mesa"?)
-            5)Mover Mesa
-            6)Convertir Delivery/Salon (Dentro de "Seleccionar Mesa")
-            7)Cobrar Mesa (falta CAJA)
-            8)Anular Mesa (falta CAJA)
-            X)Volver al menu anterior
-            """)
+                salonMenu()
                 choice=input("Ingrese una opcion: ")
-                if choice == "1":
-                    print(mesas)
-                elif choice == "2":
-                    levantarMesa(mesas,mozos,productos)
-                elif choice == "3":
-                    printMesa(mesas,productos)
-                elif choice == "4":
-                            print("Cambiar Mozo")
-                            noErrors=True
-                            table = int(input("Seleccione una mesa: "))
-                            isValid = isMesaReal(mesas,table)
-                            if isValid == False:
-                                noErrors=False
-                            
-                            if noErrors == True:
-                                isValid = isMesaEmpty(mesas,table) #! el nombre isValid aca es confuso, pero me facilita el manejo de los IFs
-                                if isValid == True:
-                                    print("Mesa vacia")
-                                    noErrors=False
-                            
-                            if noErrors == True:
-                                waiter = int(input("Seleccione el nuevo mozo a asignar: "))
-                                isValid = isMozoValid(mozos,waiter)
-                                if isValid == False:
-                                    print("Mozo no encontrado")
-                                    noErrors=False
 
-                            if noErrors == True:
-                                mesas[table-1][0] = waiter
-                elif choice == "5": #! Cambiar breaks por whiles o por algo que no me devuelva al menu de "Ver Salon" y "Ver Delivery"
+                if choice == "1": #* Ver Mesas
+                    print(mesas)
+                elif choice == "2": #* Levantar Mesa
+                    levantarMesa(mesas,mozos,productos)
+                elif choice == "3": #* Seleccionar Mesa
+                    printMesa(mesas,productos)
+                elif choice == "4": #* Cambiar Mozo
+                    cambiarMozo(mesas,mozos)
+                elif choice == "5": #* Mover Mesa 
+                    #! Cambiar breaks por whiles o por algo que no me devuelva al menu de "Ver Salon" y "Ver Delivery"
                     moverMesa(mesas)
-                elif choice == "6":
+                elif choice == "6": #* Convertir Delivery/Salon
                     print("Convertir Delivery/Salon")
                     table = int(input("Seleccione la mesa a convertir: "))
                     print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, etc)")
-                elif choice == "7":
+                elif choice == "7": #* Cobrar Mesa
                     cobrarMesa(mesas)
-                elif choice == "8":
+                elif choice == "8": #* Anular Mesa
                     anularMesa(mesas)
-                elif choice == "X" or choice == "x":
-                    print("Volver al menu anterior")
+                elif choice == "X" or choice == "x": #* Volver al menu anterior
                     salonMenu=False
                 else:
                     print("Opcion invalida")
@@ -141,13 +92,13 @@ while app:
                     print(mesasDelivery)
         elif choice == "X" or choice == "x":
                     print("Volver al menu anterior")
-                    mesasMenu=False
-                    mainMenu=True
+                    mesasMenuVar=False
+                    mainMenuVar=True
         else:
                     print("Opcion invalida")
          
     while stockMenuVar:
         stockMenu(productos)
         stockMenuVar=False
-        mainMenu=True
+        mainMenuVar=True
          

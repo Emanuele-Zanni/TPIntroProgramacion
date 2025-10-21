@@ -138,12 +138,34 @@ def printMesa(listaMesas,listaProductos):
 
 
     if isReal:
-            print(f"1. Mozo: {mesa[0]}")
-            print(f"2. Pedidos: {products}")
-            print(f"3. Mesa disponible?: {mesa[2]}")
-            print(f"4. Valor total de Productos: {mesa[3]}$")
+            print(f"• Mozo: {mesa[0]}")
+            print(f"• Mesa disponible?: {mesa[2]}")
+            print(f"• Productos: {products}")
+            print(f"• Valor total de Productos: {mesa[3]}$")
 
     return listaMesas
 
+def cambiarMozo(listaMesas,listaMozos):
+    noErrors=True
+    table = int(input("Seleccione una mesa: "))
+    isValid = isMesaReal(listaMesas,table)
+    if isValid == False:
+        noErrors=False
+                            
+    if noErrors == True:
+        isValid = isMesaEmpty(listaMesas,table) #! el nombre isValid aca es confuso, pero me facilita el manejo de los IFs
+        if isValid == True:
+            print("Mesa vacia")
+            noErrors=False
+                            
+    if noErrors == True:
+        waiter = int(input("Seleccione el nuevo mozo a asignar: "))
+        isValid = isMozoValid(listaMesas,waiter)
+        if isValid == False:
+            print("Mozo no encontrado")
+            noErrors=False
+
+        if noErrors == True:
+            listaMesas[table-1][0] = waiter
 
 
