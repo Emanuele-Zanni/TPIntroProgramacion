@@ -2,14 +2,12 @@ from Stock.functions import *
 from Mesas.validations import *
 from Mozos.validations import *
 
-def levantarMesa(listaMesas,listaMozos,listaProductos):
+def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
             pedidosMesa = []
             mesaValida=False
             mozoValido=False
-            pedidoValido=False #* ???
-            #* Type Mesa = NumeroMesa,MozoAsignado,"Pedidos",Disponible?(Boolean),MontoAPagar
 
-            #* Validar Mesa con/sin funcion
+            #* Validar Mesa
             while mesaValida==False:
                 numMesa = int(input("Ingrese el numero de mesa: "))
 
@@ -21,15 +19,18 @@ def levantarMesa(listaMesas,listaMozos,listaProductos):
 
                 mozoValido = isMozoValid(listaMozos,numMozo)
 
+            #* Cargar pedidos
             item = 1
             producto = ""
             codigo = 0
+            cantidadProductos = 0
             # total = 0
             while codigo != -1:
                 codigo = int(input("Ingrese el codigo del item a cargar (-1 para finalizar): "))
                 producto = getProduct(listaProductos,codigo)
                 if producto!= "":
                     pedidosMesa.append(producto[0])
+                    cantidadProductos += 1
                     # total += producto[2]
                 elif codigo == -1:
                     print("Mesa Levantada exitosamente!")
@@ -37,7 +38,14 @@ def levantarMesa(listaMesas,listaMozos,listaProductos):
             total = calculateTotal(listaProductos,pedidosMesa)
                 
             
-            listaMesas[numMesa-1] = [numMozo,pedidosMesa,False,total] #* usar listaMozos[numMozo-1] para guardar el nombre del mozo en vez del num
+            #? usar listaMozos[numMozo-1] para guardar el nombre del mozo en vez del num
+            listaMesas[numMesa-1] = [numMozo,pedidosMesa,False,total] #* Mesa levantada en listaMesas
+
+            #* Actualizar Stats de Mesa particular
+            stats[numMesa-1][0] += 1 #* Veces Levantada
+            stats[numMesa-1][1] = [numMozo,stats[numMesa-1][1][1] + 1] #* Mozos Asignados
+            stats[numMesa-1][2] += cantidadProductos  #* Cantidad de Productos cargados
+
         
 def anularMesa(listaMesas):
     print("Anular Mesa")

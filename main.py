@@ -9,19 +9,22 @@ cajasMenuVar=False
 mesas = [[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0]] #*[mozoAsignado,"ListaPedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
 mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
 statsMesas = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-#* MESA PARTICULAR: Veces levantada, plata recaudada, plata anulada, productos anulados, productos cargados, mozosAsignados(array con numero de 
-#* mozo + cantidad de veces que trabajaron en la mesa)
+#* MESA PARTICULAR: Veces levantada,mozosAsignados, productos cargados, productos anulados, plata recaudada, plata anulada
+#* (array con numero de mozo + cantidad de veces que trabajaron en la mesa)
+
 #* GENERALES: Mesas Movidas, Cambios de Mozo, [Mesas Cobradas, Mesas Anuladas, Productos Anulados, Productos Cargados] (Salon y Delivery),  
 
 mozos=["mozo1","mozo2","mozo3"] 
 productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30],[4,"producto4",400,40],[5,"producto5",500,50]]
 
 #******* Importaciones *********
-from Stock.menus import *
 from Mesas.menus import *
+from Stock.menus import *
+from General.menus import *
 
 from Mesas.functions import *
 from Stock.functions import *
+from General.functions import * #* hay que ver si es necesario o no
 
 from Mesas.validations import *
 from Stock.validations import *
@@ -84,7 +87,7 @@ while app:
                 elif choice == "8": #* Anular Mesa
                     anularMesa(mesas)
                 elif choice == "X" or choice == "x": #* Volver al menu anterior
-                    salonMenu=False
+                    salonMenuVar=False
                 else:
                     print("Opcion invalida")
                 
