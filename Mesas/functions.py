@@ -68,7 +68,7 @@ def anularMesa(listaMesas):
     elif isValid == False:
         print("Error al anular mesa")
 
-def cobrarMesa(listaMesas):
+def cobrarMesa(listaMesas,totalCandela):
     print("Cobrar Mesa")
     isValid=True
     table = int(input("Seleccione la mesa a cobrar: "))
@@ -83,13 +83,14 @@ def cobrarMesa(listaMesas):
             isValid=False
                                 
     if isValid:
+        totalCandela += listaMesas[table-1][3]
         listaMesas[table-1] = [0,"",True,0]
         print("Mesa cobrada exitosamente")
 
     elif isValid == False:
         print("Error al cobrar mesa")
 
-def moverMesa(mesas):
+def moverMesa(mesas,mesaMovidas):
     print("Mover Mesa")
     isValid = True
 
@@ -130,6 +131,10 @@ def moverMesa(mesas):
         print("Mesa movida exitosamente")
         mesas[tableNew] = mesas[tableOld]
         mesas[tableOld] = [0,"",True,0]
+
+        mesasMovidas += 1
+
+
 
     return mesas
 

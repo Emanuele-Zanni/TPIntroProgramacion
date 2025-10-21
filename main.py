@@ -5,6 +5,7 @@ mozosMenu=False
 stockMenuVar=False
 cajasMenuVar=False
 
+
 #? Mesas manejadas como una Lista de LISTAS
 mesas = [[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0]] #*[mozoAsignado,"ListaPedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
 mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
@@ -54,6 +55,7 @@ while app:
             mainMenuVar=False
         else:
             print("Opcion invalida")
+            clear_except_last(3)
 
     while mesasMenuVar: #* Mesas Menu
         mesasMenu()
@@ -68,7 +70,12 @@ while app:
                 choice=input("Ingrese una opcion: ")
 
                 if choice == "1": #* Ver Mesas
-                    print(mesas)
+                    #! Esto antes era solo "print(mesas)". Confirmar si se quiere una logica con while o pasa al Menu directamente
+                    var="a"
+                    while var != "":
+                        limpiarConsola()
+                        print(mesas)
+                        var=input("Presione enter para volver al menu anterior")
                 elif choice == "2": #* Levantar Mesa
                     levantarMesa(mesas,mozos,productos)
                 elif choice == "3": #* Seleccionar Mesa
@@ -76,7 +83,6 @@ while app:
                 elif choice == "4": #* Cambiar Mozo
                     cambiarMozo(mesas,mozos)
                 elif choice == "5": #* Mover Mesa 
-                    #! Cambiar breaks por whiles o por algo que no me devuelva al menu de "Ver Salon" y "Ver Delivery"
                     moverMesa(mesas)
                 elif choice == "6": #* Convertir Delivery/Salon
                     print("Convertir Delivery/Salon")
@@ -97,8 +103,10 @@ while app:
                     print("Volver al menu anterior")
                     mesasMenuVar=False
                     mainMenuVar=True
+                    clear_except_last(3)
         else:
                     print("Opcion invalida")
+                    clear_except_last(3)
          
     while stockMenuVar:
         stockMenu(productos)

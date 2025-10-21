@@ -1,4 +1,7 @@
+from General.functions import *
+
 def mainMenu():
+    limpiarConsola()
     print("""
 #######[ MENU PRINCIPAL ]#######
 1)Mesas (WIP 90%)

@@ -1,8 +1,8 @@
 from General.functions import *
 
 def mesasMenu():
-    # limpiarConsola()
-    clear_except_last(3)
+    limpiarConsola()
+    # clear_except_last(1)
     print("""
 #########[ MENU MESAS ]#########
 1)Ver Salon
@@ -21,8 +21,8 @@ X)Volver al menu anterior
 """)
         
 def salonMenu():
-    clear_except_last(3)
-    # print("\033[H\033[J", end="")
+    limpiarConsola()
+    # clear_except_last(1)
 
     print("""
 ##########[ MENU SALON ]##########
