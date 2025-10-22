@@ -9,7 +9,8 @@ cajasMenuVar=False
 #? Mesas manejadas como una Lista de LISTAS
 mesas = [[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0]] #*[mozoAsignado,"ListaPedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
 mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
-statsMesas = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+# statsMesas = [[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0]]
+statsMesas = [[0,[],0]]
 #* MESA PARTICULAR: Veces levantada,mozosAsignados, productos cargados, productos anulados, plata recaudada, plata anulada
 #* (array con numero de mozo + cantidad de veces que trabajaron en la mesa)
 
@@ -77,7 +78,7 @@ while app:
                         print(mesas)
                         var=input("Presione enter para volver al menu anterior")
                 elif choice == "2": #* Levantar Mesa
-                    levantarMesa(mesas,mozos,productos)
+                    levantarMesa(mesas,mozos,productos,statsMesas)
                 elif choice == "3": #* Seleccionar Mesa
                     printMesa(mesas,productos)
                 elif choice == "4": #* Cambiar Mozo
@@ -99,6 +100,14 @@ while app:
                 
         elif choice == "2":
                     print(mesasDelivery)
+        elif choice == "3":
+            var="a"
+            while var != "":
+                print("Estadisticas de Mesas")
+                printMesaStats(statsMesas)
+                var=input("Presione enter para volver al menu anterior") 
+        elif choice == "4":
+                    print("Configuracion de Mesas???")
         elif choice == "X" or choice == "x":
                     print("Volver al menu anterior")
                     mesasMenuVar=False

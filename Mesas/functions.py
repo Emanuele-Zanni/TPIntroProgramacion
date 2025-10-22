@@ -43,7 +43,26 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
 
             #* Actualizar Stats de Mesa particular
             stats[numMesa-1][0] += 1 #* Veces Levantada
-            stats[numMesa-1][1] = [numMozo,stats[numMesa-1][1][1] + 1] #* Mozos Asignados
+
+            # stats[numMesa-1][1][0] = [numMozo,stats[numMesa-1][1][1] + 1] #* Mozos Asignados
+
+            if len(stats[numMesa-1][1]) == 0:
+                stats[numMesa-1][1].append([numMozo,1])
+            else:
+                waiterFound = False
+                for i in range(len(stats[numMesa-1][1])):
+                    if stats[numMesa-1][1][0][0] == numMozo:
+                        stats[numMesa-1][1][0][1] += 1
+                        waiterFound = True
+                    elif i == len(stats[numMesa-1][1])-1 and waiterFound == False:
+                        stats[numMesa-1][1].append([numMozo,1])
+                
+
+            # stats[numMesa-1][1][0][0] = numMozo
+            # stats[numMesa-1][1][0][1] += 1 
+            #? stats = [[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0]]
+            #! 0,1,0,1
+
             stats[numMesa-1][2] += cantidadProductos  #* Cantidad de Productos cargados
 
         
@@ -68,7 +87,7 @@ def anularMesa(listaMesas):
     elif isValid == False:
         print("Error al anular mesa")
 
-def cobrarMesa(listaMesas,totalCandela):
+def cobrarMesa(listaMesas):
     print("Cobrar Mesa")
     isValid=True
     table = int(input("Seleccione la mesa a cobrar: "))
@@ -83,7 +102,7 @@ def cobrarMesa(listaMesas,totalCandela):
             isValid=False
                                 
     if isValid:
-        totalCandela += listaMesas[table-1][3]
+        # totalCandela += listaMesas[table-1][3]
         listaMesas[table-1] = [0,"",True,0]
         print("Mesa cobrada exitosamente")
 
@@ -141,22 +160,6 @@ def moverMesa(mesas,mesaMovidas):
 def getMesa(listaMesas,mesa):
     return listaMesas[mesa-1]
 
-def printMesa(listaMesas,listaProductos):
-    numMesa = int(input("Ingrese la mesa a visualizar:"))
-    isReal = isMesaReal(listaMesas,numMesa)
-    mesa = listaMesas[numMesa-1]
-
-    products = printProducts(listaProductos,mesa[1]) #* Ordenar productos por codigo menor a mayor
-    # total = calculateTotal(listaProductos,mesa[1]) #* Calcular total de la mesa
-
-
-    if isReal:
-            print(f"• Mozo: {mesa[0]}")
-            print(f"• Mesa disponible?: {mesa[2]}")
-            print(f"• Productos: {products}")
-            print(f"• Valor total de Productos: {mesa[3]}$")
-
-    return listaMesas
 
 def cambiarMozo(listaMesas,listaMozos):
     noErrors=True
@@ -181,4 +184,26 @@ def cambiarMozo(listaMesas,listaMozos):
         if noErrors == True:
             listaMesas[table-1][0] = waiter
 
+def printMesa(listaMesas,listaProductos):
+    numMesa = int(input("Ingrese la mesa a visualizar:"))
+    isReal = isMesaReal(listaMesas,numMesa)
+    mesa = listaMesas[numMesa-1]
 
+    products = printProducts(listaProductos,mesa[1]) #* Ordenar productos por codigo menor a mayor
+    # total = calculateTotal(listaProductos,mesa[1]) #* Calcular total de la mesa
+
+
+    if isReal:
+            print(f"• Mozo: {mesa[0]}")
+            print(f"• Mesa disponible?: {mesa[2]}")
+            print(f"• Productos: {products}")
+            print(f"• Valor total de Productos: {mesa[3]}$")
+
+    return listaMesas
+
+def printMozosMesa(stats):
+    text = ""
+    for i in range(len(stats)):
+        text += f"\nMozo {stats[i][0]} x {stats[i][1]}"
+
+    return text

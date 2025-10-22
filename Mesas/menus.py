@@ -1,4 +1,5 @@
 from General.functions import *
+from Mesas.functions import *
 
 def mesasMenu():
     limpiarConsola()
@@ -36,5 +37,20 @@ def salonMenu():
 8)Anular Mesa (falta CAJA)
 X)Volver al menu anterior
 #################################
+""")
+    
+def printMesaStats(stats):
+
+    # for stat in range(len(stats)):
+    #     print(stat)
+
+    choice = int(input("Ingrese el numero de mesa a visualizar"))
+
+    print(f"""
+#########[ DATOS MESA {choice} ]#########
+Veces Levantada: {stats[choice-1][0]}
+Mozos Asignados:{printMozosMesa(stats[choice-1][1])}
+Cant Productos Cargados: {stats[choice-1][2]}
+Porcentaje de eleccion: algo%, que se divida la cant de veces levantada con el total de todas las mesas
 """)
     
