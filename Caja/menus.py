@@ -10,17 +10,46 @@ X)Volver al menu anterior
 #################################
 """)
     
-def InfoGeneral(mesas):
+def printInfoGeneral(mesas,mozos,stock,productos):
     print(f"""
 #########[ INFO GENERAL ]#########
-Cantidad de Mozos = {mozos}
+Cantidad de Mozos = {len(mozos)}
 Cantidad de Mesas = {len(mesas)}
 Cantidad de Stock = {stock}
-Cantidad de Productos = {productos}
-Cantidad de pérdida = 
-Cantidad de ganancia = 
+Cantidad de Productos = {productos} 
+Cantidad de dinero total = {}
+
+efectivo
+tarjeta débito
+tarjeta crédito
+cheque 
+
+##################################
+""")
+
+def printInfoMozos():
+    print(f"""
+#########[ INFO MOZOS]#########
+Cambios de mozos mesa = 
+
 ##################################
 """)
     
 
+def printInfoMesas(): 
+    print(f"""
+#########[ INFO MESAS ]#########
+Cantidad de Delivery =
+Cantidad de Mesas levantadas =
+Cantidad de mesas usadas = 
+
+##################################
+""")
+
+def printInfoStock():
+    print(f"""
+##########[ INFO STOCK ]##########
+
+##################################
+""")
          

@@ -4,6 +4,12 @@ mesasMenuVar=False
 mozosMenuVar=False
 stockMenuVar=False
 cajasMenuVar=False
+efectivoTotalCaja=0 
+debitoTotalCaja=0
+creditoTotalCaja=0 
+chequeTotalCaja=0 
+
+
 
 
 #? Mesas manejadas como una Lista de LISTAS
@@ -28,11 +34,12 @@ productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30
 from Mesas.menus import *
 from Stock.menus import *
 from General.menus import * 
+from Mozos.menus import *
+from Caja.menus import *
 
 from Mesas.functions import *
 from Stock.functions import *
 from General.functions import * #* hay que ver si es necesario o no
-from Mozos.menus import *
 
 from Mesas.validations import *
 from Stock.validations import *
@@ -54,7 +61,7 @@ while app:
             stockMenuVar=True
             mainMenuVar=False
         elif choice=="4": #* Cajas
-            cajasMenuVar
+            cajasMenuVar=True
             mainMenuVar=False
         elif choice=="5": #* Finalizar Dia o Config??
             print("Finalizar Dia")
@@ -126,4 +133,30 @@ while app:
         stockMenu(productos)
         stockMenuVar=False
         mainMenuVar=True
+
+
+    while cajasMenuVar:
+        cajaMenu()
+        choice = int(input("Ingrese un número: "))
+        if choice == 1: 
+            print("Ver informacion de General")
+            printInfoGeneral(mesas,mozos) 
+   cantProductos{productos} 
+            cantDineroTotal 
+
+        elif choice == 2:
+            print("Ver informacion de Mozos")
+    
+        elif choice ==3:
+            print("Ver informacion de Mesas")
+            mesasDelivery = 
+            cantidadMesasLevantadas = levantarMesa(mesas,mozos,productos,statsMesas)
+            cantidadMesasUsadas = cobrarMesa(mesas)
+        elif choice==4: 
+            print("Ver información de Stock")
+            
+        
+        
+
+    
          
