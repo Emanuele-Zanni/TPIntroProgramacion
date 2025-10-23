@@ -1,7 +1,7 @@
 app=True
 mainMenuVar=True
 mesasMenuVar=False
-mozosMenu=False
+mozosMenuVar=False
 stockMenuVar=False
 cajasMenuVar=False
 
@@ -16,17 +16,23 @@ statsMesas = [[0,[],0]]
 
 #* GENERALES: Mesas Movidas, Cambios de Mozo, [Mesas Cobradas, Mesas Anuladas, Productos Anulados, Productos Cargados] (Salon y Delivery),  
 
-mozos=["mozo1","mozo2","mozo3"] 
+# Estructura de mozos: [ID, Nombre, [Lista de Mesas Asignadas], Total Recaudado]
+mozos=[
+    [1, "Mozo A", [], 0],
+    [2, "Mozo B", [], 0],
+    [3, "Mozo C", [], 0]
+]
 productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30],[4,"producto4",400,40],[5,"producto5",500,50]]
 
 #******* Importaciones *********
 from Mesas.menus import *
 from Stock.menus import *
-from General.menus import *
+from General.menus import * 
 
 from Mesas.functions import *
 from Stock.functions import *
 from General.functions import * #* hay que ver si es necesario o no
+from Mozos.menus import *
 
 from Mesas.validations import *
 from Stock.validations import *
@@ -43,8 +49,7 @@ while app:
             mesasMenuVar=True
             mainMenuVar=False
         elif choice=="2": #* Mozos
-            mozosMenu=True
-            mainMenuVar=False
+            menu_mozos(mozos)
         elif choice=="3": #* Stock
             stockMenuVar=True
             mainMenuVar=False
@@ -90,9 +95,9 @@ while app:
                     table = int(input("Seleccione la mesa a convertir: "))
                     print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, etc)")
                 elif choice == "7": #* Cobrar Mesa
-                    cobrarMesa(mesas)
+                    cobrarMesa(mesas,mozos)
                 elif choice == "8": #* Anular Mesa
-                    anularMesa(mesas)
+                    anularMesa(mesas,mozos)
                 elif choice == "X" or choice == "x": #* Volver al menu anterior
                     salonMenuVar=False
                 else:

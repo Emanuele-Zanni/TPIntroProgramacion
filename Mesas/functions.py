@@ -1,6 +1,7 @@
 from Stock.functions import *
 from Mesas.validations import *
 from Mozos.validations import *
+from Mozos.functions import *
 
 def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
             pedidosMesa = []
@@ -40,7 +41,9 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
             
             #? usar listaMozos[numMozo-1] para guardar el nombre del mozo en vez del num
             listaMesas[numMesa-1] = [numMozo,pedidosMesa,False,total] #* Mesa levantada en listaMesas
-
+            indice_mozo = buscar_indice(listaMozos, numMozo)
+            if indice_mozo != -1:
+                listaMozos[indice_mozo][2].append(numMesa)
             #* Actualizar Stats de Mesa particular
             stats[numMesa-1][0] += 1 #* Veces Levantada
 
@@ -66,7 +69,7 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
             stats[numMesa-1][2] += cantidadProductos  #* Cantidad de Productos cargados
 
         
-def anularMesa(listaMesas):
+def anularMesa(listaMesas, listaMozos):
     print("Anular Mesa")
     isValid=True
     table = int(input("Seleccione la mesa a anular: "))
@@ -82,12 +85,30 @@ def anularMesa(listaMesas):
                                 
     if isValid:
         listaMesas[table-1] = [0,"",True,0]
+        """Agregado para los mozos"""
+        id_mozo_asignado = listaMesas[table-1][0] # Obtiene el ID del mozo de esa mesa
+        if id_mozo_asignado != 0:
+            indice_mozo = buscar_indice(listaMozos, id_mozo_asignado)
+            if indice_mozo != -1:
+                # mozo[2] es la lista de mesas
+                lista_mesas_mozo = listaMozos[indice_mozo][2]
+                
+                # Buscar la mesa para eliminarla de la lista del mozo
+                indice_mesa_en_mozo = -1
+                j = 0
+                while j < len(lista_mesas_mozo) and indice_mesa_en_mozo == -1:
+                    if lista_mesas_mozo[j] == table: # 'table' es el numMesa (ej: 1, 2, 3)
+                        indice_mesa_en_mozo = j
+                    j += 1
+                    
+                if indice_mesa_en_mozo != -1:
+                    lista_mesas_mozo.pop(indice_mesa_en_mozo)   
         print("Mesa anulada exitosamente")
 
     elif isValid == False:
         print("Error al anular mesa")
 
-def cobrarMesa(listaMesas):
+def cobrarMesa(listaMesas, listaMozos):
     print("Cobrar Mesa")
     isValid=True
     table = int(input("Seleccione la mesa a cobrar: "))
@@ -104,6 +125,24 @@ def cobrarMesa(listaMesas):
     if isValid:
         # totalCandela += listaMesas[table-1][3]
         listaMesas[table-1] = [0,"",True,0]
+        """Agregado para los mozos"""
+        id_mozo_asignado = listaMesas[table-1][0] # Obtiene el ID del mozo de esa mesa
+        if id_mozo_asignado != 0:
+            indice_mozo = buscar_indice(listaMozos, id_mozo_asignado)
+            if indice_mozo != -1:
+                # mozo[2] es la lista de mesas
+                lista_mesas_mozo = listaMozos[indice_mozo][2]
+                
+                # Buscar la mesa para eliminarla de la lista del mozo
+                indice_mesa_en_mozo = -1
+                j = 0
+                while j < len(lista_mesas_mozo) and indice_mesa_en_mozo == -1:
+                    if lista_mesas_mozo[j] == table: # 'table' es el numMesa (ej: 1, 2, 3)
+                        indice_mesa_en_mozo = j
+                    j += 1
+                    
+                if indice_mesa_en_mozo != -1:
+                    lista_mesas_mozo.pop(indice_mesa_en_mozo)       
         print("Mesa cobrada exitosamente")
 
     elif isValid == False:
