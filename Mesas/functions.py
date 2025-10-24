@@ -1,7 +1,8 @@
 from Stock.functions import *
-from Mesas.validations import *
-from Mozos.validations import *
 from Mozos.functions import *
+from General.functions import *
+from Mozos.validations import *
+from Mesas.validations import *
 
 def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
             pedidosMesa = []
@@ -20,12 +21,10 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
 
                 mozoValido = isMozoValid(listaMozos,numMozo)
 
-            #* Cargar pedidos
-            item = 1
-            producto = ""
+            #* Cargar productos
+            # producto = ""
             codigo = 0
             cantidadProductos = 0
-            # total = 0
             while codigo != -1:
                 codigo = int(input("Ingrese el codigo del item a cargar (-1 para finalizar): "))
                 producto = getProduct(listaProductos,codigo)
@@ -39,12 +38,14 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
             total = calculateTotal(listaProductos,pedidosMesa)
                 
             
+            ordenarBubble(pedidosMesa,"desc")
             #? usar listaMozos[numMozo-1] para guardar el nombre del mozo en vez del num
             listaMesas[numMesa-1] = [numMozo,pedidosMesa,False,total] #* Mesa levantada en listaMesas
             indice_mozo = buscar_indice(listaMozos, numMozo)
             if indice_mozo != -1:
                 listaMozos[indice_mozo][2].append(numMesa)
             #* Actualizar Stats de Mesa particular
+            print(numMesa-1)
             stats[numMesa-1][0] += 1 #* Veces Levantada
 
             # stats[numMesa-1][1][0] = [numMozo,stats[numMesa-1][1][1] + 1] #* Mozos Asignados

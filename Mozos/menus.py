@@ -4,7 +4,7 @@ from General.functions import limpiarConsola
 def menu_mozos(lista_mozos):
     on = True
     while on:
-        limpiarConsola()
+        # limpiarConsola()
         print("""
 #######[ MENU MOZOS ]#######
 1) Ver Mozos

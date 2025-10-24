@@ -2,7 +2,7 @@ from General.functions import *
 from Mesas.functions import *
 
 def mesasMenu():
-    limpiarConsola()
+    # limpiarConsola()
     # clear_except_last(1)
     print("""
 #########[ MENU MESAS ]#########
@@ -22,7 +22,7 @@ X)Volver al menu anterior
 """)
         
 def salonMenu():
-    limpiarConsola()
+    # limpiarConsola()
     # clear_except_last(1)
 
     print("""

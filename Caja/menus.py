@@ -17,7 +17,7 @@ Cantidad de Mozos = {len(mozos)}
 Cantidad de Mesas = {len(mesas)}
 Cantidad de Stock = {stock}
 Cantidad de Productos = {productos} 
-Cantidad de dinero total = {}
+Cantidad de dinero total = {productos}
 
 efectivo
 tarjeta débito

@@ -68,7 +68,7 @@ while app:
             mainMenuVar=False
         else:
             print("Opcion invalida")
-            clear_except_last(3)
+            # clear_except_last(3)
 
     while mesasMenuVar: #* Mesas Menu
         mesasMenu()
@@ -86,7 +86,7 @@ while app:
                     #! Esto antes era solo "print(mesas)". Confirmar si se quiere una logica con while o pasa al Menu directamente
                     var="a"
                     while var != "":
-                        limpiarConsola()
+                        # limpiarConsola()
                         print(mesas)
                         var=input("Presione enter para volver al menu anterior")
                 elif choice == "2": #* Levantar Mesa
@@ -124,10 +124,10 @@ while app:
                     print("Volver al menu anterior")
                     mesasMenuVar=False
                     mainMenuVar=True
-                    clear_except_last(3)
+                    # clear_except_last(3)
         else:
                     print("Opcion invalida")
-                    clear_except_last(3)
+                    # clear_except_last(3)
          
     while stockMenuVar:
         stockMenu(productos)
@@ -141,17 +141,17 @@ while app:
         if choice == 1: 
             print("Ver informacion de General")
             printInfoGeneral(mesas,mozos) 
-   cantProductos{productos} 
-            cantDineroTotal 
+            # cantProductos{productos} 
+            # cantDineroTotal 
 
         elif choice == 2:
             print("Ver informacion de Mozos")
     
         elif choice ==3:
             print("Ver informacion de Mesas")
-            mesasDelivery = 
-            cantidadMesasLevantadas = levantarMesa(mesas,mozos,productos,statsMesas)
-            cantidadMesasUsadas = cobrarMesa(mesas)
+            # mesasDelivery = 
+            # cantidadMesasLevantadas = levantarMesa(mesas,mozos,productos,statsMesas)
+            # cantidadMesasUsadas = cobrarMesa(mesas)
         elif choice==4: 
             print("Ver información de Stock")
             
