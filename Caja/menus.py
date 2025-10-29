@@ -6,6 +6,7 @@ def cajaMenu():
 2)Ver información de mozos 
 3)Ver información de mesas 
 4)Ver información de stock 
+5)Ver información de pagos
 X)Volver al menu anterior 
 #################################
 """)
@@ -18,11 +19,6 @@ Cantidad de Mesas = {len(mesas)}
 Cantidad de Stock = {stock}
 Cantidad de Productos = {productos} 
 Cantidad de dinero total = {productos}
-
-efectivo
-tarjeta débito
-tarjeta crédito
-cheque 
 
 ##################################
 """)
@@ -53,3 +49,11 @@ def printInfoStock():
 ##################################
 """)
          
+def printInfoPagos():
+    print(f"""
+#########[ INFO PAGOS ]######### 
+Total en efectivo = {efectivoTotalCaja}
+Total en tarjeta débito = {debitoTotalCaja}
+Total en tarjeta crédito = {creditoTotalCaj}
+Total en cheque = {chequeTotalCaja}
+################################""")
