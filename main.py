@@ -16,7 +16,7 @@ chequeTotalCaja=0
 mesas = [[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0]] #*[mozoAsignado,"ListaPedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
 mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
 # statsMesas = [[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0]]
-statsMesas = [[0,[],0]]
+statsMesas = [[0,[],0],[0,[],0],[0,[],0],[0,[],0],[0,[],0]]
 #* MESA PARTICULAR: Veces levantada,mozosAsignados, productos cargados, productos anulados, plata recaudada, plata anulada
 #* (array con numero de mozo + cantidad de veces que trabajaron en la mesa)
 
@@ -49,6 +49,7 @@ from Mozos.validations import *
 
 while app:
     while mainMenuVar: #* Main Menu
+        clearConsole()
         mainMenu()
         choice=input("Ingrese una opcion: ")
 
@@ -71,6 +72,7 @@ while app:
             # clear_except_last(3)
 
     while mesasMenuVar: #* Mesas Menu
+        clearConsole()
         mesasMenu()
         choice=input("Ingrese una opcion: ")
 
@@ -79,32 +81,72 @@ while app:
             while salonMenuVar:
                 #! Mostrar Mesas Salon + Mesas Delivery automaticamente arriba del Menu????
                 # print: 3Mover mesa, 2Cambiar Mozo, 1Editar Pedidos, 5Cobrar Mesa,6 Anular Mesa, 4Convertir a Delivery/Salon
+                clearConsole()
                 salonMenu()
                 choice=input("Ingrese una opcion: ")
 
                 if choice == "1": #* Ver Mesas
                     #! Esto antes era solo "print(mesas)". Confirmar si se quiere una logica con while o pasa al Menu directamente
-                    var="a"
-                    while var != "":
+                    # var="a"
+                    # while var != "":
                         # limpiarConsola()
-                        print(mesas)
+                        printMesas(mesas,productos)
+
                         var=input("Presione enter para volver al menu anterior")
                 elif choice == "2": #* Levantar Mesa
                     levantarMesa(mesas,mozos,productos,statsMesas)
                 elif choice == "3": #* Seleccionar Mesa
-                    printMesa(mesas,productos)
-                elif choice == "4": #* Cambiar Mozo
-                    cambiarMozo(mesas,mozos)
-                elif choice == "5": #* Mover Mesa 
-                    moverMesa(mesas)
-                elif choice == "6": #* Convertir Delivery/Salon
-                    print("Convertir Delivery/Salon")
-                    table = int(input("Seleccione la mesa a convertir: "))
-                    print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, etc)")
-                elif choice == "7": #* Cobrar Mesa
-                    cobrarMesa(mesas,mozos)
-                elif choice == "8": #* Anular Mesa
-                    anularMesa(mesas,mozos)
+                    isEmpty=False
+                    #* Manejar casos en donde la mesa no existe o no esta levantada
+                    #! Mesa vacia se muestra con todo en 0, debe mostrarse como "Mesa Vacia"??? (Manejado indirectamente)
+                    #! Mesa no existente rompe el programa, manejar ese caso
+                    numMesa = int(input("Ingrese la mesa a visualizar:"))
+                    isReal = isMesaReal(mesas,numMesa)
+                    if isReal: 
+                        isEmpty = isMesaEmpty(mesas,numMesa)
+
+                    if isReal and not isEmpty:
+                        mesa = printMesa(mesas,productos,numMesa,True)
+                        while isReal:
+                            print(mesa)
+                            seleccionarMesaMenu(numMesa)
+                            choice = input("Ingrese una opcion: ")
+                            if choice == "1": #* Cobrar Mesa
+                                cobrarMesa(mesas,mozos)
+                            elif choice == "2": #* Anular Mesa
+                                anularMesa(mesas,mozos)
+                            elif choice == "3": #* Cambiar Mozo
+                                cambiarMozo(mesas,mozos)
+                            elif choice == "4": #* Mover Mesa
+                                moverMesa(mesas)
+                            elif choice == "5": #* Convertir Delivery/Salon
+                                print("Convertir Delivery/Salon")
+                                table = int(input("Seleccione la mesa a convertir: "))
+                                print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, etc)")
+                            elif choice == "x" or choice == "X": #* Volver al menu anterior
+                                isReal=False
+                            else:
+                                print("Opcion invalida")
+                    elif isEmpty:
+                        print(f"La Mesa {numMesa} esta vacia")
+                        var=input("Presione enter para volver al menu anterior...")
+                    else:
+                        print(f"La Mesa {numMesa} no existe")
+                        var=input("Presione enter para volver al menu anterior...")
+
+
+                # elif choice == "4": #* Cambiar Mozo
+                #     cambiarMozo(mesas,mozos)
+                # elif choice == "5": #* Mover Mesa 
+                #     moverMesa(mesas)
+                # elif choice == "6": #* Convertir Delivery/Salon
+                #     print("Convertir Delivery/Salon")
+                #     table = int(input("Seleccione la mesa a convertir: "))
+                #     print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, etc)")
+                # elif choice == "7": #* Cobrar Mesa
+                #     cobrarMesa(mesas,mozos)
+                # elif choice == "8": #* Anular Mesa
+                    # anularMesa(mesas,mozos)
                 elif choice == "X" or choice == "x": #* Volver al menu anterior
                     salonMenuVar=False
                 else:
@@ -116,6 +158,7 @@ while app:
             var="a"
             while var != "":
                 print("Estadisticas de Mesas")
+                clearConsole()
                 printMesaStats(statsMesas)
                 var=input("Presione enter para volver al menu anterior") 
         elif choice == "4":

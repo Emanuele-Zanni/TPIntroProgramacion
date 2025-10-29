@@ -1,3 +1,8 @@
+import os
+
+def clearConsole():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 def limpiarConsola():
     print("\033[H\033[J", end="")
 

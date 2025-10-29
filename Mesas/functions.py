@@ -224,22 +224,86 @@ def cambiarMozo(listaMesas,listaMozos):
         if noErrors == True:
             listaMesas[table-1][0] = waiter
 
-def printMesa(listaMesas,listaProductos):
-    numMesa = int(input("Ingrese la mesa a visualizar:"))
-    isReal = isMesaReal(listaMesas,numMesa)
-    mesa = listaMesas[numMesa-1]
-
-    products = printProducts(listaProductos,mesa[1]) #* Ordenar productos por codigo menor a mayor
-    # total = calculateTotal(listaProductos,mesa[1]) #* Calcular total de la mesa
 
 
-    if isReal:
-            print(f"• Mozo: {mesa[0]}")
-            print(f"• Mesa disponible?: {mesa[2]}")
-            print(f"• Productos: {products}")
-            print(f"• Valor total de Productos: {mesa[3]}$")
+def printMesa(listaMesas, listaProductos, numMesa, showAllProducts=False, maxShowProducts=3):
+    if not isMesaReal(listaMesas, numMesa):
+        return f"Error: Mesa {numMesa} no encontrada"
 
-    return listaMesas
+    mesa = listaMesas[numMesa - 1]
+    inner = BOX_WIDTH - 2
+    titulo = f"######### [ Mesa {numMesa} ] #########"
+
+    top     = " " + "-" * (BOX_WIDTH - 2)
+    sep_mid = _box_line("-" * inner, inner)
+    bottom  = "|" + "_" * (BOX_WIDTH - 2) + "|"
+
+    # ──────────────── CASO MESA VACÍA ────────────────
+    if mesa[2] == True:  # disponible/vacía
+        ALTURA = 7  # cantidad total de líneas dentro del cuadro
+        lineas = [top]
+        lineas.append(_box_line(titulo.center(inner), inner))
+        lineas.append(sep_mid)
+        # cuántas líneas agregar antes y después del texto
+        vacias_arriba = (ALTURA - 3) // 2  # deja espacio arriba
+        vacias_abajo = ALTURA - 3 - vacias_arriba
+        for _ in range(vacias_arriba):
+            lineas.append(_box_line("", inner))
+        lineas.append(_box_line("MESA VACIA".center(inner), inner))
+        for _ in range(vacias_abajo):
+            lineas.append(_box_line("", inner))
+        lineas.append(bottom)
+        lineas.append("")  # salto final opcional
+        return "\n".join(lineas)
+
+    # costo total (si no lo tenés calculado, podés recalcularlo aquí)
+    costo_total = mesa[3]
+
+    lineas = []
+    lineas.append(top)
+    lineas.append(_box_line(titulo.center(inner), inner))
+    lineas.append(sep_mid)
+    lineas.append(_box_line(f"• Mozo: {mesa[0]}", inner))
+    # lineas.append(_box_line(f"• Mesa disponible?: {mesa[2]}", inner))
+
+    # Productos (múltiples líneas con precio a la derecha)
+    lineas.append(_box_line("• Productos en mesa:", inner))
+
+    codigos = mesa[1]
+    prod_pairs = construir_lineas_productos_lr(listaProductos, codigos)
+
+    if not prod_pairs:
+        lineas.append(_box_line("  (sin productos)", inner))
+    else:
+        if showAllProducts == False:
+            mostrar = prod_pairs[:maxShowProducts]
+            restantes = len(prod_pairs) - len(mostrar)
+            for left, price in mostrar:
+                lineas.append(_box_line_lr(left, price, inner, min_gap=1))
+            if restantes > 0:
+                # esta línea es informativa, sin precio a la derecha
+                lineas.append(_box_line(f" y {restantes} productos más...", inner))
+        else:
+            for left, price in prod_pairs:
+                lineas.append(_box_line_lr(left, price, inner, min_gap=1))
+
+    # Costo total (precio pegado a la derecha)
+    lineas.append(sep_mid)
+    lineas.append(_box_line_lr("• Total:", f"{costo_total}$", inner, min_gap=1))
+
+    lineas.append(bottom)
+    lineas.append("")  # salto final opcional
+
+    return "\n".join(lineas)
+
+
+def printMesas(listaMesas, listaProductos):
+    bloques = [
+        printMesa(listaMesas, listaProductos, i)
+        for i in range(1, len(listaMesas) + 1)
+    ]
+    render_side_by_side(bloques, cols=4, padding=6)
+
 
 def printMozosMesa(stats):
     text = ""
@@ -247,3 +311,76 @@ def printMozosMesa(stats):
         text += f"\nMozo {stats[i][0]} x {stats[i][1]}"
 
     return text
+
+#! Este conjunto de Funciones tienen fines meramente esteticos y se encargan de formatear el texto y datos para una mejor visualizacion
+#* Esta variable determina el ancho de los printMesa()
+BOX_WIDTH = 37 # BOX_WIDTH = 41
+
+#* Esta funcion se encarga de ajustar el texto a la anchura de la caja
+#? Utiliza el metodo ljust() de Python para alinear el texto a la izquierda y utiliza operaciones de Slicing ([:inner])
+def _fit(texto, inner):
+    if len(texto) <= inner:
+        return texto.ljust(inner)
+    if inner <= 1:
+        return "…"[:inner]
+    return texto[:inner-1] + "…"
+
+#* Esta funcion se encarga de construir una linea junto con sus barras verticales "|" y acomoda dentro suyo el texto (inner)
+def _box_line(texto, inner):
+    return f"|{_fit(texto, inner)}|"
+
+#* Esta funcion hace lo mismo que _box_line() pero divide su ancho en 2 columnas para poder lograr la separacion entre el nombre del producto y su precio
+def _box_line_lr(left, right, inner, min_gap=1, padding_right=2):
+    right = str(right)
+    espacio_left = inner - len(right) - min_gap - padding_right
+    if espacio_left < 0:
+        right = _fit(right, inner)
+        return f"|{right}|"
+    left_fit = _fit(left, espacio_left)
+    return f"|{left_fit}{' ' * min_gap}{right}{' ' * padding_right}|"
+
+#* Se encarga de construir las lineas de los productos, separando el nombre del producto de su precio para poder utilizarlo en conjunto con _box_line_lr()
+def construir_lineas_productos_lr(listaProductos, codigos):
+    conteo = {}
+    for c in codigos:
+        conteo[c] = conteo.get(c, 0) + 1
+
+    lineas = []
+    for codigo, cant in conteo.items():
+        item = getProduct(listaProductos, codigo)  # item[1]=nombre, item[2]=precio_unit
+        nombre = str(item[1])
+        subtotal = item[2] * cant
+        left = f"- {nombre} x {cant}"
+        price = f"{subtotal}$"
+        lineas.append((left, price))
+    return lineas
+
+#* Se encarga de imprimir los bloques de texto de las mesas uno al lado del otro, toma como parametros una lista de bloques de texto, la cantidad de columnas y el padding entre ellas
+def render_side_by_side(bloques, cols=4, padding=4):
+    if not bloques:
+        return
+
+    for start in range(0, len(bloques), cols):
+        grupo = bloques[start:start + cols]
+
+        # 1) Separar cada bloque del grupo en líneas
+        cols_lines = [b.rstrip("\n").splitlines() for b in grupo]
+
+        # 2) Igualar alturas (rellenar con líneas vacías)
+        max_alto = max((len(c) for c in cols_lines), default=0)
+        for c in cols_lines:
+            c += [""] * (max_alto - len(c))
+
+        # 3) Calcular anchos por columna (para alinear)
+        anchos = [max((len(linea) for linea in c), default=0) for c in cols_lines]
+
+        # 4) Imprimir línea por línea la fila actual (las 'cols' columnas)
+        for fila in range(max_alto):
+            partes = []
+            for col_idx, c in enumerate(cols_lines):
+                partes.append(c[fila].ljust(anchos[col_idx] + padding))
+            print("".join(partes))
+
+        # 5) Línea en blanco opcional entre filas de columnas
+        print()
+#!-------------------------------------------------------------------------------------------
