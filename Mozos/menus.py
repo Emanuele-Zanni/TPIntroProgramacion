@@ -1,10 +1,10 @@
 from Mozos.functions import *
-from General.functions import limpiarConsola
+from General.functions import *
 
 def menu_mozos(lista_mozos):
     on = True
     while on:
-        # limpiarConsola()
+        clearConsole()
         print("""
 #######[ MENU MOZOS ]#######
 1) Ver Mozos
@@ -16,15 +16,15 @@ X) Volver al menú principal
         choice = input("Ingrese una opcion: ")
 
         if choice == "1":
-
+            clearConsole()
             mostrar_mozos(lista_mozos) 
             input("\nPresione enter para continuar...")
         elif choice == "2":
-
+            clearConsole()
             agregar_mozo(lista_mozos)
             input("\nPresione enter para continuar...")
         elif choice == "3":
-
+            clearConsole()
             eliminar_mozo(lista_mozos)
             input("\nPresione enter para continuar...")
         elif choice.lower() == "x":

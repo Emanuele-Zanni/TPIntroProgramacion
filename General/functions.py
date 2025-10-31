@@ -3,13 +3,6 @@ import os
 def clearConsole():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def limpiarConsola():
-    print("\033[H\033[J", end="")
-
-def clear_except_last(n=3):
-    print(f"\033[{n}A", end="")
-    print("\033[1J", end="")
-
 #* Esta funcion se encarga de ordenar una lista de forma ascendente o descendente (segun el segundo parametro)
 def ordenarBubble(lista, mode="asc"):
     longitud = len(lista)
@@ -34,4 +27,9 @@ def ordenarBubbleParalela(Lista, ListaParalela, mode="asc"):
                 Lista[indice], Lista[indice + 1] = Lista[indice + 1], Lista[indice]
                 ListaParalela[indice], ListaParalela[indice + 1] = ListaParalela[indice + 1], ListaParalela[indice]
 
-
+def checkAndConvertToInt(value):
+    if value.strip().isdigit():
+        newValue = int(value)
+        return True,newValue
+    else:
+        return False,value

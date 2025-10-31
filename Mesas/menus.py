@@ -1,5 +1,5 @@
 from General.functions import *
-from Mesas.functions import *
+# from Mesas.functions import printMozosMesa
 
 def mesasMenu():
     # limpiarConsola()
@@ -30,13 +30,24 @@ X)Volver al menu anterior
     
 def seleccionarMesaMenu(numMesa):
     print(f"""
-#########[ OPERACIONES MESA {numMesa}]#########
+#########[ OPERACIONES MESA {numMesa} ]#########
 1)Cobrar Mesa
 2)Anular Mesa
 3)Cambiar Mozo
 4)Mover Mesa
 5)Convertir hacia Delivery
 X)Volver al menu anterior
+#################################
+""")
+    
+def metodoPagoMenu():
+    print(f"""
+#########[ Metodo de Pago ]#########
+1)Efectivo
+2)Tarjeta Debito 
+3)Tarjeta Credito (10% de intere )
+4)Cheque
+5)Deuda
 #################################
 """)
     
@@ -47,18 +58,18 @@ def statsMenu(): #* Esto posiblemente lo borre mas adelante
 X)Volver al menu anterior
 """)
     
-def printMesaStats(stats):
+# def printMesaStats(stats):
 
-    # for stat in range(len(stats)):
-    #     print(stat)
+#     # for stat in range(len(stats)):
+#     #     print(stat)
 
-    choice = int(input("Ingrese el numero de mesa a visualizar"))
+#     choice = int(input("Ingrese el numero de mesa a visualizar"))
 
-    print(f"""
-#########[ DATOS MESA {choice} ]#########
-Veces Levantada: {stats[choice-1][0]}
-Mozos Asignados:{printMozosMesa(stats[choice-1][1])}
-Cant Productos Cargados: {stats[choice-1][2]}
-Porcentaje de eleccion: algo%, que se divida la cant de veces levantada con el total de todas las mesas
-""")
+#     print(f"""
+# #########[ DATOS MESA {choice} ]#########
+# Veces Levantada: {stats[choice-1][0]}
+# Mozos Asignados:{printMozosMesa(stats[choice-1][1])}
+# Cant Productos Cargados: {stats[choice-1][2]}
+# Porcentaje de eleccion: algo%, que se divida la cant de veces levantada con el total de todas las mesas
+# """)
     

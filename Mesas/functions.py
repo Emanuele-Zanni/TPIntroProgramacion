@@ -3,37 +3,61 @@ from Mozos.functions import *
 from General.functions import *
 from Mozos.validations import *
 from Mesas.validations import *
+from Mesas.menus import *
 
 def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
             pedidosMesa = []
             mesaValida=False
             mozoValido=False
+            isNumber=False
 
+            #? Agregar posibilidad de cancelar la operacion en cualquier momento ingresando "X" o "x"
             #* Validar Mesa
             while mesaValida==False:
-                numMesa = int(input("Ingrese el numero de mesa: "))
+                clearConsole()
+                numMesa = input("Ingrese el numero de mesa: ")
+                isNumber,numMesa = checkAndConvertToInt(numMesa) 
 
-                mesaValida = isMesaValid(listaMesas,numMesa)
+                if isNumber:
+                    mesaValida = isMesaValid(listaMesas,numMesa)
+                else:
+                    print("El numero de mesa debe ser un numero entero")
+                    input("Presione enter para continuar...")
 
             #* Validar Mozo
             while mozoValido==False:
-                numMozo = int(input("Ingrese el numero de mozo: "))
+                clearConsole()
+                numMozo = input("Ingrese el numero de mozo: ")
+                isNumber,numMozo = checkAndConvertToInt(numMozo)
 
-                mozoValido = isMozoValid(listaMozos,numMozo)
+                if isNumber:
+                    mozoValido = isMozoValid(listaMozos,numMozo)
+                else:
+                    print("El numero de mozo debe ser un numero entero")
+                    input("Presione enter para continuar...")
 
-            #* Cargar productos
-            # producto = ""
+            #* Cargar productos (Probablemente haya que reworkearlo para mejorar UX, un submenu probablemente)
+            # if mesaValida and mozoValido:
             codigo = 0
             cantidadProductos = 0
-            while codigo != -1:
-                codigo = int(input("Ingrese el codigo del item a cargar (-1 para finalizar): "))
-                producto = getProduct(listaProductos,codigo)
-                if producto!= "":
-                    pedidosMesa.append(producto[0])
-                    cantidadProductos += 1
-                    # total += producto[2]
-                elif codigo == -1:
+            while codigo != "-1":
+                clearConsole()
+                print(f"Pedidos de la mesa {numMesa}:\n{pedidosMesa}") #! Esto reemplazarlo por un print de la lista de pedidos, la funcion ya hecha
+                codigo = input("Ingrese el codigo del item a cargar (-1 para finalizar): ")
+
+                if codigo == "-1":
                     print("Mesa Levantada exitosamente!")
+                else:
+                    isNumber,codigo = checkAndConvertToInt(codigo)
+
+                    if isNumber:
+                        producto = getProduct(listaProductos,codigo)
+                        pedidosMesa.append(producto[0])
+                        cantidadProductos += 1
+                    else:
+                        print("El codigo del item debe ser un numero entero")
+                        input("Presione enter para continuar...")
+                    # total += producto[2]
 
             total = calculateTotal(listaProductos,pedidosMesa)
                 
@@ -61,58 +85,61 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
                     elif i == len(stats[numMesa-1][1])-1 and waiterFound == False:
                         stats[numMesa-1][1].append([numMozo,1])
                 
-
             # stats[numMesa-1][1][0][0] = numMozo
             # stats[numMesa-1][1][0][1] += 1 
             #? stats = [[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0]]
             #! 0,1,0,1
 
             stats[numMesa-1][2] += cantidadProductos  #* Cantidad de Productos cargados
-
         
 def anularMesa(listaMesas, listaMozos):
     print("Anular Mesa")
     isValid=True
-    table = int(input("Seleccione la mesa a anular: "))
+    table = input("Seleccione la mesa a anular: ")
+    isNumber,table = checkAndConvertToInt(table)
 
-    isValid = isMesaReal(listaMesas,table)
-    if isValid == False:
-        print("Mesa no encontrada")
-                            
-    if isValid:
-        isEmpty = isMesaEmpty(listaMesas,table)
-        if isEmpty:
-            isValid=False
+    if isNumber:
+        isValid = isMesaReal(listaMesas,table)
+        if isValid == False:
+            print("Mesa no encontrada")
                                 
-    if isValid:
-        listaMesas[table-1] = [0,"",True,0]
-        """Agregado para los mozos"""
-        id_mozo_asignado = listaMesas[table-1][0] # Obtiene el ID del mozo de esa mesa
-        if id_mozo_asignado != 0:
-            indice_mozo = buscar_indice(listaMozos, id_mozo_asignado)
-            if indice_mozo != -1:
-                # mozo[2] es la lista de mesas
-                lista_mesas_mozo = listaMozos[indice_mozo][2]
-                
-                # Buscar la mesa para eliminarla de la lista del mozo
-                indice_mesa_en_mozo = -1
-                j = 0
-                while j < len(lista_mesas_mozo) and indice_mesa_en_mozo == -1:
-                    if lista_mesas_mozo[j] == table: # 'table' es el numMesa (ej: 1, 2, 3)
-                        indice_mesa_en_mozo = j
-                    j += 1
+        if isValid:
+            isEmpty = isMesaEmpty(listaMesas,table)
+            if isEmpty:
+                isValid=False
+                                    
+        if isValid:
+            listaMesas[table-1] = [0,"",True,0]
+            id_mozo_asignado = listaMesas[table-1][0] # Obtiene el ID del mozo de esa mesa
+            if id_mozo_asignado != 0:
+                indice_mozo = buscar_indice(listaMozos, id_mozo_asignado)
+                if indice_mozo != -1:
+                    # mozo[2] es la lista de mesas
+                    lista_mesas_mozo = listaMozos[indice_mozo][2]
                     
-                if indice_mesa_en_mozo != -1:
-                    lista_mesas_mozo.pop(indice_mesa_en_mozo)   
-        print("Mesa anulada exitosamente")
+                    # Buscar la mesa para eliminarla de la lista del mozo
+                    indice_mesa_en_mozo = -1
+                    j = 0
+                    while j < len(lista_mesas_mozo) and indice_mesa_en_mozo == -1:
+                        if lista_mesas_mozo[j] == table: # 'table' es el numMesa (ej: 1, 2, 3)
+                            indice_mesa_en_mozo = j
+                        j += 1
+                        
+                    if indice_mesa_en_mozo != -1:
+                        lista_mesas_mozo.pop(indice_mesa_en_mozo)   
+            print("Mesa anulada exitosamente")
 
-    elif isValid == False:
-        print("Error al anular mesa")
+        elif isValid == False:
+            print("Error al anular mesa")
+    else:
+        print("El numero de mesa debe ser un numero entero")
+        input("Presione enter para continuar...")
 
-def cobrarMesa(listaMesas, listaMozos):
-    print("Cobrar Mesa")
+
+
+def cobrarMesa(listaMesas, listaMozos, table,e,td,tc,ch,d):
     isValid=True
-    table = int(input("Seleccione la mesa a cobrar: "))
+    # table = int(input("Seleccione la mesa a cobrar: "))
 
     isValid = isMesaReal(listaMesas,table)
     if isValid == False:
@@ -124,8 +151,6 @@ def cobrarMesa(listaMesas, listaMozos):
             isValid=False
                                 
     if isValid:
-        # totalCandela += listaMesas[table-1][3]
-        listaMesas[table-1] = [0,"",True,0]
         """Agregado para los mozos"""
         id_mozo_asignado = listaMesas[table-1][0] # Obtiene el ID del mozo de esa mesa
         if id_mozo_asignado != 0:
@@ -143,11 +168,44 @@ def cobrarMesa(listaMesas, listaMozos):
                     j += 1
                     
                 if indice_mesa_en_mozo != -1:
-                    lista_mesas_mozo.pop(indice_mesa_en_mozo)       
-        print("Mesa cobrada exitosamente")
+                    lista_mesas_mozo.pop(indice_mesa_en_mozo)  
+
+        choice = 0 
+        while choice < 1 or choice > 5:
+            metodoPagoMenu()
+            choice = int(input("Seleccione el metodo de pago: "))
+
+
+        total = listaMesas[table-1][3]
+        print(f"Total: {total}")
+
+        if choice == 1:
+            print("Efectivo")
+            e += total
+        elif choice == 2:
+            print("debito")
+            td += total
+        elif choice == 3:
+            print("credito")
+            tc += total
+        elif choice == 4:
+            print("cheque")
+            ch += total
+        elif choice == 5:
+            print("deuda")
+            d += total
+
+                     
+        print(f"Mesa {table} cobrada exitosamente (Total = {listaMesas[table-1][3]}$)")
+        resetMesa(listaMesas,table)
+
+        return e,td,tc,ch,d
 
     elif isValid == False:
         print("Error al cobrar mesa")
+
+def resetMesa(listaMesas,table):
+    listaMesas[table-1] = [0,[],True,0]
 
 def moverMesa(mesas,mesaMovidas):
     print("Mover Mesa")
@@ -314,7 +372,7 @@ def printMozosMesa(stats):
 
 #! Este conjunto de Funciones tienen fines meramente esteticos y se encargan de formatear el texto y datos para una mejor visualizacion
 #* Esta variable determina el ancho de los printMesa()
-BOX_WIDTH = 37 # BOX_WIDTH = 41
+BOX_WIDTH = 32 # BOX_WIDTH = 41
 
 #* Esta funcion se encarga de ajustar el texto a la anchura de la caja
 #? Utiliza el metodo ljust() de Python para alinear el texto a la izquierda y utiliza operaciones de Slicing ([:inner])

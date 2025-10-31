@@ -17,7 +17,8 @@ def mostrar_mozos(lista_mozos):
 
 def agregar_mozo(lista_mozos):
     """Agrega un nuevo mozo a la lista"""
-    nombre = input("Ingrese el nombre del nuevo mozo: ")
+    nombre = input("Ingrese el nombre del nuevo mozo: ") #! Falta validacion por nombre vacio o numerico (debe ser un string NO vacio)
+    #! Tambien se debe validar por nombres y IDs repetidos
 
     nuevo_id = 1
     if len(lista_mozos) > 0:
