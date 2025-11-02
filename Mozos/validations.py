@@ -8,6 +8,5 @@ def isMozoValid(listaMozos, numMozo):
             mozoValido=True
             # print("Mozo seleccionado exitosamente!")
             # print(f"Mozo numero {numMozo}: {listaMozos[numMozo-1]}")
-            break
 
     return mozoValido

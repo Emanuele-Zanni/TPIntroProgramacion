@@ -15,11 +15,16 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
             #* Validar Mesa
             while mesaValida==False:
                 clearConsole()
+                print("[Menu Principal > Menu Mesas > Menu Salon > *Levantar Mesa*]\n")
+                printMesasLibres(listaMesas)
                 numMesa = input("Ingrese el numero de mesa: ")
                 isNumber,numMesa = checkAndConvertToInt(numMesa) 
 
                 if isNumber:
-                    mesaValida = isMesaValid(listaMesas,numMesa)
+                    mesaValida,error = isMesaValid(listaMesas,numMesa)
+                    if mesaValida == False:
+                        print(f"[ERROR] {error}")
+                        input("Presione enter para continuar...")
                 else:
                     print("El numero de mesa debe ser un numero entero")
                     input("Presione enter para continuar...")
@@ -27,11 +32,16 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
             #* Validar Mozo
             while mozoValido==False:
                 clearConsole()
+                print("[Menu Principal > Menu Mesas > Menu Salon > *Levantar Mesa*]\n")
+                print(f"Mesa Numero {numMesa}")
                 numMozo = input("Ingrese el numero de mozo: ")
                 isNumber,numMozo = checkAndConvertToInt(numMozo)
 
                 if isNumber:
                     mozoValido = isMozoValid(listaMozos,numMozo)
+                    if mozoValido == False:
+                        # print(f"Mozo {numMozo} no encontrado")
+                        input("Presione enter para continuar...")
                 else:
                     print("El numero de mozo debe ser un numero entero")
                     input("Presione enter para continuar...")
@@ -42,18 +52,28 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
             cantidadProductos = 0
             while codigo != "-1":
                 clearConsole()
-                print(f"Pedidos de la mesa {numMesa}:\n{pedidosMesa}") #! Esto reemplazarlo por un print de la lista de pedidos, la funcion ya hecha
+                print("[Menu Principal > Menu Mesas > Menu Salon > *Levantar Mesa*]\n")
+                print(f"Mesa numero {numMesa}")
+                print(f"Mozo numero: {numMozo}")
+                # print(f"Productos de la mesa:\n{pedidosMesa}") #! Esto reemplazarlo por un print de la lista de pedidos, la funcion ya hecha
+                text=printProducts(listaProductos,pedidosMesa)
+                print(f"Productos de la mesa:{text}")
                 codigo = input("Ingrese el codigo del item a cargar (-1 para finalizar): ")
 
                 if codigo == "-1":
                     print("Mesa Levantada exitosamente!")
+                    input("Presione enter para continuar...")
                 else:
                     isNumber,codigo = checkAndConvertToInt(codigo)
 
                     if isNumber:
                         producto = getProduct(listaProductos,codigo)
-                        pedidosMesa.append(producto[0])
-                        cantidadProductos += 1
+                        if producto != "":
+                            pedidosMesa.append(producto[0])
+                            cantidadProductos += 1
+                        else:
+                            # print("Codigo de producto no encontrado")
+                            input("Presione enter para continuar...")
                     else:
                         print("El codigo del item debe ser un numero entero")
                         input("Presione enter para continuar...")
@@ -170,37 +190,48 @@ def cobrarMesa(listaMesas, listaMozos, table,e,td,tc,ch,d):
                 if indice_mesa_en_mozo != -1:
                     lista_mesas_mozo.pop(indice_mesa_en_mozo)  
 
-        choice = 0 
-        while choice < 1 or choice > 5:
+        hasPaid = False
+        while hasPaid == False:
             metodoPagoMenu()
-            choice = int(input("Seleccione el metodo de pago: "))
+            choice = input("Seleccione el metodo de pago: ")
+            
+            total = listaMesas[table-1][3]
+            print(f"Total: {total}")
 
+            if choice == "1":
+                print("Efectivo")
+                e += total
+                hasPaid = True
+            elif choice == "2":
+                print("debito")
+                td += total
+                hasPaid = True
+            elif choice == "3":
+                print("credito")
+                tc += total
+                hasPaid = True
+            elif choice == "4":
+                print("cheque")
+                ch += total
+                hasPaid = True
+            elif choice == "5":
+                print("deuda")
+                d += total
+                hasPaid = True
+            elif choice == "x" or choice == "X":
+                print("cancelar")
+                isValid = False
+                hasPaid = True
+            else:
+                print("Opcion no valida")
+                input("Presione enter para continuar...")
+        
 
-        total = listaMesas[table-1][3]
-        print(f"Total: {total}")
-
-        if choice == 1:
-            print("Efectivo")
-            e += total
-        elif choice == 2:
-            print("debito")
-            td += total
-        elif choice == 3:
-            print("credito")
-            tc += total
-        elif choice == 4:
-            print("cheque")
-            ch += total
-        elif choice == 5:
-            print("deuda")
-            d += total
-
-                     
-        print(f"Mesa {table} cobrada exitosamente (Total = {listaMesas[table-1][3]}$)")
-        resetMesa(listaMesas,table)
+        if isValid and hasPaid:
+            print(f"Mesa {table} cobrada exitosamente (Total = {listaMesas[table-1][3]}$)")
+            resetMesa(listaMesas,table)
 
         return e,td,tc,ch,d
-
     elif isValid == False:
         print("Error al cobrar mesa")
 
@@ -356,11 +387,27 @@ def printMesa(listaMesas, listaProductos, numMesa, showAllProducts=False, maxSho
 
 
 def printMesas(listaMesas, listaProductos):
+    clearConsole()
     bloques = [
         printMesa(listaMesas, listaProductos, i)
         for i in range(1, len(listaMesas) + 1)
     ]
     render_side_by_side(bloques, cols=4, padding=6)
+
+def printMesasOcupadas(listaMesas):
+    mesasOcupadas = []
+    for i in range(len(listaMesas)):
+        if listaMesas[i][2] == False:
+            mesasOcupadas.append(i+1)
+    print(f"Mesas Activas: {mesasOcupadas}")
+
+def printMesasLibres(listaMesas):
+    mesasLibres = []
+    for i in range(len(listaMesas)):
+        if listaMesas[i][2] == True:
+            mesasLibres.append(i+1)
+    print(f"Mesas Disponibles: {mesasLibres}")
+    
 
 
 def printMozosMesa(stats):

@@ -5,6 +5,8 @@ def mesasMenu():
     # limpiarConsola()
     # clear_except_last(1)
     print("""
+[Menu Principal > Menu Mesas]
+
 #########[ MENU MESAS ]#########
 1)Ver Salon
 2)Ver Delivery (NO HECHO)
@@ -20,6 +22,8 @@ def salonMenu():
     # clear_except_last(1)
 
     print("""
+[Menu Principal > Menu Mesas > Menu Salon]
+          
 ##########[ MENU SALON ]##########
 1)Ver Mesas
 2)Levantar Mesa
@@ -36,7 +40,7 @@ def seleccionarMesaMenu(numMesa):
 3)Cambiar Mozo
 4)Mover Mesa
 5)Convertir hacia Delivery
-X)Volver al menu anterior
+X)Cancelar Operacion
 #################################
 """)
     
@@ -48,6 +52,7 @@ def metodoPagoMenu():
 3)Tarjeta Credito (10% de intere )
 4)Cheque
 5)Deuda
+X)Cancelar Operacion
 #################################
 """)
     

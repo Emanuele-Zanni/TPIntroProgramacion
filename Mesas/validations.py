@@ -18,15 +18,17 @@ def isMesaReal(listaMesas, numMesa):
 def isMesaValid(listaMesas,numMesa):
     mesaValida=False
     tableFound=False
+    error=""
     for i in range(len(listaMesas)):
         if numMesa-1 != i and tableFound==False:
             if i+1 == len(listaMesas):
                   print("")
+                  error = f"Mesa {numMesa} no encontrada"
                 # print(f"Mesa {numMesa} no encontrada")
         elif listaMesas[numMesa-1][2] == False: #* Disponible? = False
                         tableFound=True
                         if i+1 == len(listaMesas):
-                            print("")
+                            error = f"Mesa {numMesa} ocupada"
                             # print(f"Mesa {numMesa} ocupada")
                         # break
         elif numMesa-1 == i and tableFound==False:
@@ -36,4 +38,4 @@ def isMesaValid(listaMesas,numMesa):
                         i = len(listaMesas)
                         # break
 
-    return mesaValida
+    return mesaValida, error

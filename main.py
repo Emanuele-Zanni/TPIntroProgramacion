@@ -38,7 +38,7 @@ mozos=[
     [3, "Mozo C", [], 0]
 ]
 # Estadistica de los mozos: [Veces levantadas, Dinero recaudado]
-mozoStats = [[0,0],[0,0],[0,0]] 
+mozoStats = [[0,0,0],[0,0,0],[0,0,0]] 
 
 productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30],[4,"producto4",400,40],[5,"producto5",500,50]]
 
@@ -117,6 +117,12 @@ while app:
                     #* Manejar casos en donde la mesa no existe o no esta levantada
                     #! Mesa vacia se muestra con todo en 0, debe mostrarse como "Mesa Vacia"??? (Manejado indirectamente)
                     #! Mesa no existente rompe el programa, manejar ese caso
+                    # mesasOcupadas = []
+                    # for i in range(len(mesas)):
+                    #     if mesas[i][2] == False:
+                    #         mesasOcupadas.append(i+1)
+                    # print(f"Mesas Activas: {mesasOcupadas}")
+                    printMesasOcupadas(mesas)
                     numMesa = input("Ingrese la mesa a visualizar:")
                     isNumber,numMesa = checkAndConvertToInt(numMesa)
                     # numMesa = valor
@@ -146,7 +152,7 @@ while app:
                                     
                                     #? [mozoStats]: Suma el costo total de la mesa a la stat "dinero recaudado"
                                     numMozo = mesas[numMesa-1][0]           # Dinero recaudado
-                                    mozoStats[numMozo-1][1] += 1  
+                                    mozoStats[numMozo-1][1] += mesas[numMesa-1][3]  
                                           
                                     ec,tdc,tcc,cc,dc=cobrarMesa(mesas,mozos,numMesa,ec,tdc,tcc,cc,dc)
                                                 
@@ -166,6 +172,7 @@ while app:
                                     print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, ec)")
                                 elif choice == "x" or choice == "X": #* Volver al menu anterior
                                     isReal=False
+                                    seleccionarMesaVar=False
                                 else:
                                     print("Opcion invalida")
                                     input("Presione enter para volver al menu anterior...")

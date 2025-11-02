@@ -1,3 +1,5 @@
+from General.functions import *
+
 def addProducto(listaProductos):
     print("Añadir producto")
     codigo = int(input("Ingrese Código del producto: "))
@@ -54,13 +56,17 @@ def deleteProduct(listaProductos):
     return listaProductos
 
 def getProduct(listaProductos, codigo):
+    isFound = False
     for producto in listaProductos:
-        if producto[0] == codigo:
+        if producto[0] == codigo and isFound == False:
+            # print("Producto encontrado")
             # print(f"El precio de {producto[1]} es {producto[2]}")
+            isFound = True
             return producto
-
-    print(f"Producto con codigo {codigo} no encontrado.")
-    return ""
+        
+    if isFound == False:
+        print(f"Producto con codigo {codigo} no encontrado.")
+        return ""
 
 def printProducts(listaProductos,codigos):
     uniqueProdList = []
@@ -86,6 +92,7 @@ def printProducts(listaProductos,codigos):
 
     # print("Print Products:")
     text = ""
+    ordenarBubble(results,"desc")
     for i in range(len(results)):
         item = getProduct(listaProductos, results[i][0]) #* Obtiene el producto de la lista orginal para mostrar el nombre
         # print(f"{item[1]} x {results[i][1]} unidades") 

@@ -3,6 +3,8 @@ from General.functions import *
 def mainMenu():
     # limpiarConsola()
     print("""
+[Menu Principal]
+          
 #######[ MENU PRINCIPAL ]#######
 1)Ver Mesas
 2)Ver Mozos
