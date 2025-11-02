@@ -1,5 +1,6 @@
 #* Variables de APP
 app=True
+cargaProdTutorial=True
 #? Variables de Menu
 mainMenuVar=True
 mesasMenuVar=False 
@@ -108,7 +109,8 @@ while app:
 
                         var=input("Presione enter para volver al menu anterior")
                 elif choice == "2": #* Levantar Mesa
-                    levantarMesa(mesas,mozos,productos,statsMesas)
+                    levantarMesa(mesas,mozos,productos,statsMesas,cargaProdTutorial)
+                    cargaProdTutorial=False
                 elif choice == "3": #* Seleccionar Mesa
                     #! Mandar todo esto a una funcion "seleccionarMesa()" y 
                     clearConsole()

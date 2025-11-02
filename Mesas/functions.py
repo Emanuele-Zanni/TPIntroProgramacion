@@ -5,7 +5,7 @@ from Mozos.validations import *
 from Mesas.validations import *
 from Mesas.menus import *
 
-def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
+def levantarMesa(listaMesas,listaMozos,listaProductos,stats,prodsTutorial):
             pedidosMesa = []
             mesaValida=False
             mozoValido=False
@@ -17,7 +17,7 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
                 clearConsole()
                 print("[Menu Principal > Menu Mesas > Menu Salon > *Levantar Mesa*]\n")
                 printMesasLibres(listaMesas)
-                numMesa = input("Ingrese el numero de mesa: ")
+                numMesa = input("• Ingrese el numero de mesa: ")
                 isNumber,numMesa = checkAndConvertToInt(numMesa) 
 
                 if isNumber:
@@ -34,7 +34,7 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
                 clearConsole()
                 print("[Menu Principal > Menu Mesas > Menu Salon > *Levantar Mesa*]\n")
                 print(f"Mesa Numero {numMesa}")
-                numMozo = input("Ingrese el numero de mozo: ")
+                numMozo = input("• Ingrese el numero de mozo: ")
                 isNumber,numMozo = checkAndConvertToInt(numMozo)
 
                 if isNumber:
@@ -48,21 +48,26 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,stats):
 
             #* Cargar productos (Probablemente haya que reworkearlo para mejorar UX, un submenu probablemente)
             # if mesaValida and mozoValido:
-            codigo = 0
             cantidadProductos = 0
-            while codigo != "-1":
+            cargaProductos = True
+            if prodsTutorial:
+                printCargaProdsTutorial()
+            while cargaProductos:
                 clearConsole()
                 print("[Menu Principal > Menu Mesas > Menu Salon > *Levantar Mesa*]\n")
                 print(f"Mesa numero {numMesa}")
                 print(f"Mozo numero: {numMozo}")
                 # print(f"Productos de la mesa:\n{pedidosMesa}") #! Esto reemplazarlo por un print de la lista de pedidos, la funcion ya hecha
                 text=printProducts(listaProductos,pedidosMesa)
-                print(f"Productos de la mesa:{text}")
-                codigo = input("Ingrese el codigo del item a cargar (-1 para finalizar): ")
+                print(f"[Productos de la mesa]:{text}\n")
+                codigo = input("• Ingrese el codigo del item a cargar: ")
 
-                if codigo == "-1":
+                if codigo == "x" or codigo == "X":
                     print("Mesa Levantada exitosamente!")
                     input("Presione enter para continuar...")
+                    cargaProductos = False
+                elif codigo == "?":
+                    printCargaProdsTutorial()
                 else:
                     isNumber,codigo = checkAndConvertToInt(codigo)
 
@@ -313,7 +318,15 @@ def cambiarMozo(listaMesas,listaMozos):
         if noErrors == True:
             listaMesas[table-1][0] = waiter
 
-
+def printCargaProdsTutorial():
+    clearConsole()
+    print("Controles de la Carga de productos:\n")
+    print("Ingrese 'x' para finalizar la carga de productos")
+    print("Ingrese '-' antes del codigo de producto para eliminar el producto (ejemplo: -2 = Resta 1 producto de codigo 2)")
+    print("Ingrese '*' despues del codigo de producto, seguido por un numero entero, para agregar esa cantidad de productos (ejemplo: 2*4 = Agrega 4 productos de codigo 2)")
+    print("Puede tambien combinar simbolos de la siguiente manera: -2*4 = Resta 4 productos de codigo 2 de ser posible")
+    print("\nIngrese '?' para volver a visualizar este tutorial")
+    input("\nPresione cualquier tecla para cerrar el tutorial...")
 
 def printMesa(listaMesas, listaProductos, numMesa, showAllProducts=False, maxShowProducts=3):
     if not isMesaReal(listaMesas, numMesa):
