@@ -244,13 +244,30 @@ while app:
             # cantDineroTotal 
 
         elif choice == "2":
-            print("Ver informacion de Mozos")
-    
+            print("Ver informacion de Mozos")           #[ID, Nombre, [Lista de Mesas Asignadas], Total Recaudado]
+
+            #qué mozo atendió =
+            #print("Qué mozo atendió"mozos[1])
+                                         
+            #cuánto recaudó el mozo x cada mesa =
+            #print("Cuánto recaudó el mozo por cada mesa"[3])  
+            
+            #ver cuánto cambios de mesa tuvo el mozo seleccionado =
+            
+            #Cantidad de Delivery =
+
+            #Producto más vendido (por el mozo)= 
+            #Producto menos vendido (por el mozo)=
+            
+            
         elif choice =="3":
             print("Ver informacion de Mesas")
             # mesasDelivery = 
             # cantidadMesasLevantadas = levantarMesa(mesas,mozos,productos,statsMesas)
             # cantidadMesasUsadas = cobrarMesa(mesas)
+            # cantidad de prods vendidos total
+            #porcentaje de stock vendido en el dia
+
         elif choice=="4": 
             print("Ver información de Stock")
         elif choice == "X" or choice == "x": #* Volver al menu anterior
