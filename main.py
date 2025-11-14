@@ -266,6 +266,9 @@ while app:
             # mesasDelivery = 
             # cantidadMesasLevantadas = levantarMesa(mesas,mozos,productos,statsMesas)
             # cantidadMesasUsadas = cobrarMesa(mesas)
+            # cantidad de prods vendidos total
+            #porcentaje de stock vendido en el dia
+
         elif choice=="4": 
             print("Ver información de Stock")
         elif choice == "X" or choice == "x": #* Volver al menu anterior
