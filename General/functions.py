@@ -33,3 +33,12 @@ def checkAndConvertToInt(value):
         return True,newValue
     else:
         return False,value
+    
+def checkAndConvertToFloat(value):
+    if value.strip().replace('.', '', 1).isdigit():
+        newValue = float(value)
+        return True,newValue
+    else:
+        return False,value
+    
+

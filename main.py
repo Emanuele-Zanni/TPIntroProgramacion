@@ -23,7 +23,14 @@ dc=0 #* Deuda Caja
 
 
 #? Mesas manejadas como una Lista de LISTAS
-mesas = [[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0],[0,[],True,0]] #*[mozoAsignado,"ListaPedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
+#*[mozoAsignado,"ListaPedidos",Disponible?,TotalMesa] (num de mesa = posicion en Lista)
+mesas = [ 
+     [0,[],True,0],
+     [0,[],True,0],
+     [0,[],True,0],
+     [0,[],True,0],
+     [0,[],True,0]
+     ] 
 mesasDelivery = [] #* mesas infinitas, mismo type de mesa pero SIN estado "disponible?", y numMesa modificado (un id)
 # statsMesas = [[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0],[0,[[0,0]],0]]
 statsMesas = [[0,[],0],[0,[],0],[0,[],0],[0,[],0],[0,[],0]]
@@ -38,8 +45,9 @@ mozos=[
     [2, "Mozo B", [], 0],
     [3, "Mozo C", [], 0]
 ]
-# Estadistica de los mozos: [Veces levantadas, Dinero recaudado]
-mozoStats = [[0,0,0],[0,0,0],[0,0,0]] 
+#? Estructura de Stats de los mozos:
+#? [[Mesas cobradas Salon,Dinero,MesasDelivery,DineroDelivery],[Anulaciones Salon, Dinero Anulado Salon, Anulaciones Delivery,Dinero Anulado Delivery]]
+mozoStats = [[[0,0,0,0],[0,0,0,0]]]
 
 productos = [[1,"producto1",100,10],[2,"producto2",200,20],[3,"producto3",300,30],[4,"producto4",400,40],[5,"producto5",500,50]]
 
@@ -60,9 +68,8 @@ from Stock.validations import *
 from Mozos.validations import *
 #*******************************
 
-
 while app:
-    while mainMenuVar: #* Main Menu
+    while mainMenuVar: #* Menu Principal
         clearConsole()
         mainMenu()
         choice=input("Ingrese una opcion: ")
@@ -112,81 +119,86 @@ while app:
                     levantarMesa(mesas,mozos,productos,statsMesas,cargaProdTutorial)
                     cargaProdTutorial=False
                 elif choice == "3": #* Seleccionar Mesa
-                    #! Mandar todo esto a una funcion "seleccionarMesa()" y 
+                    #! Mandar todo esto a una funcion "seleccionarMesa()"
                     clearConsole()
                     isEmpty=False
                     isReal=False
-                    #* Manejar casos en donde la mesa no existe o no esta levantada
-                    #! Mesa vacia se muestra con todo en 0, debe mostrarse como "Mesa Vacia"??? (Manejado indirectamente)
-                    #! Mesa no existente rompe el programa, manejar ese caso
-                    # mesasOcupadas = []
-                    # for i in range(len(mesas)):
-                    #     if mesas[i][2] == False:
-                    #         mesasOcupadas.append(i+1)
-                    # print(f"Mesas Activas: {mesasOcupadas}")
-                    printMesasOcupadas(mesas)
-                    numMesa = input("Ingrese la mesa a visualizar:")
-                    isNumber,numMesa = checkAndConvertToInt(numMesa)
-                    # numMesa = valor
-                    # print(numMesa.isdigit())
 
-                    if isNumber:
-                        isReal = isMesaReal(mesas,numMesa)
-                    # else:
-                    #     isReal=False
+                    mesasActivas,text=printMesasActivas(mesas)
 
-                    if isReal: 
-                        isEmpty = isMesaEmpty(mesas,numMesa)
-
-                    if isReal and not isEmpty:
-                        mesa = printMesa(mesas,productos,numMesa,True)
-                        if isReal:
-                            seleccionarMesaVar=True
-                            while seleccionarMesaVar:
-                                print(mesa)
-                                seleccionarMesaMenu(numMesa)
-                                choice = input("Ingrese una opcion: ")
-                                if choice == "1": #* Cobrar Mesa
-
-                                    #? [mozoStats]: Sumar +1 a la stat "veces levantada"
-                                    numMozo = mesas[numMesa-1][0]   #* Obtiene el numero de mozo correspondiente a la mesa
-                                    mozoStats[numMozo-1][0] += 1 #* Suma +1 a la Stat "veces levantada" de ese mozo
-                                    
-                                    #? [mozoStats]: Suma el costo total de la mesa a la stat "dinero recaudado"
-                                    numMozo = mesas[numMesa-1][0]           # Dinero recaudado
-                                    mozoStats[numMozo-1][1] += mesas[numMesa-1][3]  
-                                          
-                                    ec,tdc,tcc,cc,dc=cobrarMesa(mesas,mozos,numMesa,ec,tdc,tcc,cc,dc)
-                                                
-
-                                    input("Presione enter para volver al menu anterior...")
-                                    seleccionarMesaVar=False
-                                elif choice == "2": #* Anular Mesa
-                                    anularMesa(mesas,mozos)
-                                elif choice == "3": #* Cambiar Mozo
-                                    cambiarMozo(mesas,mozos)
-                                    #* Variable de cambio de mozo +1?
-                                elif choice == "4": #* Mover Mesa
-                                    moverMesa(mesas)
-                                elif choice == "5": #* Convertir Delivery/Salon
-                                    print("Convertir Delivery/Salon")
-                                    table = int(input("Seleccione la mesa a convertir: "))
-                                    print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, ec)")
-                                elif choice == "x" or choice == "X": #* Volver al menu anterior
-                                    isReal=False
-                                    seleccionarMesaVar=False
-                                else:
-                                    print("Opcion invalida")
-                                    input("Presione enter para volver al menu anterior...")
-                    elif isEmpty:
-                        print(f"La Mesa {numMesa} esta vacia")
-                        input("Presione enter para volver al menu anterior...")
-                    elif isNumber == False:
-                        print(f"La opcion ingresada debe ser un numero entero")
+                    if len(mesasActivas)==0:
+                        print("No hay mesas levantadas")
                         input("Presione enter para volver al menu anterior...")
                     else:
-                        print(f"La Mesa {numMesa} no existe")
-                        input("Presione enter para volver al menu anterior...")
+                        print("[Menu Principal > Mesas > Salon > *Seleccionar Mesa*]")
+                        print("")
+                        print(text)
+                        print("")
+                        numMesa = input("Ingrese la mesa a visualizar:")
+                        isNumber,numMesa = checkAndConvertToInt(numMesa)
+                        # numMesa = valor
+                        # print(numMesa.isdigit())
+
+                        if isNumber:
+                            isReal = isMesaReal(mesas,numMesa)
+                        # else:
+                        #     isReal=False
+
+                        if isReal: 
+                            isEmpty = isMesaEmpty(mesas,numMesa)
+
+                        if isReal and not isEmpty:
+                            mesa = printMesa(mesas,productos,numMesa,True)
+                            if isReal:
+                                seleccionarMesaVar=True
+                                while seleccionarMesaVar:
+                                    clearConsole()
+                                    print("[Menu Principal > Mesas > Salon > *Seleccionar Mesa*]")
+                                    print("")
+                                    print(mesa)
+                                    seleccionarMesaMenu(numMesa)
+                                    choice = input("Ingrese una opcion: ")
+                                    if choice == "1": #* Cobrar Mesa
+
+                                        #? [mozoStats]: Sumar +1 a la stat "Mesas Cobradas Salon"
+                                        numMozo = mesas[numMesa-1][0]   #* Obtiene el numero de mozo correspondiente a la mesa
+                                        mozoStats[numMozo-1][0][0] += 1 #* Suma +1 a la Stat "Mesas Cobradas Salon" de ese mozo
+                                        
+                                        #? [mozoStats]: Suma el costo total de la mesa a la stat "dinero recaudado Salon"
+                                        numMozo = mesas[numMesa-1][0]           # Dinero recaudado
+                                        mozoStats[numMozo-1][0][1] += mesas[numMesa-1][3]  
+                                            
+                                        ec,tdc,tcc,cc,dc=cobrarMesa(mesas,mozos,numMesa,ec,tdc,tcc,cc,dc)
+                                                    
+
+                                        input("Presione enter para volver al menu anterior...")
+                                        seleccionarMesaVar=False
+                                    elif choice == "2": #* Anular Mesa
+                                        anularMesa(mesas,mozos)
+                                    elif choice == "3": #* Cambiar Mozo
+                                        cambiarMozo(mesas,mozos)
+                                        #* Variable de cambio de mozo +1?
+                                    elif choice == "4": #* Mover Mesa
+                                        moverMesa(mesas)
+                                    elif choice == "5": #* Convertir Delivery/Salon
+                                        print("Convertir Delivery/Salon")
+                                        table = int(input("Seleccione la mesa a convertir: "))
+                                        print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, ec)")
+                                    elif choice == "x" or choice == "X": #* Volver al menu anterior
+                                        isReal=False
+                                        seleccionarMesaVar=False
+                                    else:
+                                        print("Opcion invalida")
+                                        input("Presione enter para volver al menu anterior...")
+                        elif isEmpty:
+                            print(f"La Mesa {numMesa} esta vacia")
+                            input("Presione enter para volver al menu anterior...")
+                        elif isNumber == False:
+                            print(f"La opcion ingresada debe ser un numero entero")
+                            input("Presione enter para volver al menu anterior...")
+                        else:
+                            print(f"La Mesa {numMesa} no existe")
+                            input("Presione enter para volver al menu anterior...")
 
 
                 # elif choice == "4": #* Cambiar Mozo
@@ -208,7 +220,7 @@ while app:
                     input("Presione enter para volver al menu anterior...")
                 
         elif choice == "2":
-                    print(mesasDelivery)
+            print(mesasDelivery)
         elif choice == "3":
             var="a"
             while var != "":
@@ -216,8 +228,11 @@ while app:
                 clearConsole()
                 printMesaStats(statsMesas)
                 var=input("Presione enter para volver al menu anterior") 
-        elif choice == "4":
-                    print("Configuracion de Mesas???")
+        elif choice == "4": #* Configurar Cantidad de Mesas
+            clearConsole()
+            print("[Menu Principal > Mesas > Salon > *Configurar Mesas*]")
+            print("")
+            mesas,statsMesas = editMesasQuantity(mesas,statsMesas)
         elif choice == "X" or choice == "x":
                     print("Volver al menu anterior")
                     mesasMenuVar=False
@@ -244,7 +259,7 @@ while app:
             # cantDineroTotal 
 
         elif choice == "2":
-            print("Ver informacion de Mozos")
+            infoMozosSubmenu(mozos,mozoStats)
     
         elif choice =="3":
             print("Ver informacion de Mesas")
@@ -265,9 +280,4 @@ while app:
 #* Validaciones a todos los inputs, para no romper el programa (todos deben aceptar numeros o letras)
 #* Agregar Mensaje de 2-pasos (presione enter para continuar...) despues de cada operacion
 #* Agregar clearConsole() al inicio de cada menu segun corresponda
-            
-        
-        
-
     
-         

@@ -1,3 +1,5 @@
+from General.functions import *
+
 def buscar_indice(lista_mozos, id_mozo):
     indice_encontrado = -1
     i = 0
@@ -16,41 +18,69 @@ def mostrar_mozos(lista_mozos):
     print("----------------------")
 
 def agregar_mozo(lista_mozos):
-    """Agrega un nuevo mozo a la lista"""
+    nameCheck = False
+    nameEmpty = False
+
     nombre = input("Ingrese el nombre del nuevo mozo: ") #! Falta validacion por nombre vacio o numerico (debe ser un string NO vacio)
     #! Tambien se debe validar por nombres y IDs repetidos
 
-    nuevo_id = 1
-    if len(lista_mozos) > 0:
-        nuevo_id = lista_mozos[-1][0] + 1
-    
-    # Estructura de lista de mozos: [ID, Nombre, [Mesas], Recaudado]
+    for i in range(len(lista_mozos)):
+        if lista_mozos[i][1] == nombre:
+            nameCheck = True
+    if nombre == "":
+        nameEmpty = True
 
-    nuevo_mozo = [nuevo_id, nombre, [], 0]
-    lista_mozos.append(nuevo_mozo)
-    print(f"Mozo {nombre} fue agregado")
-    
-    return lista_mozos
 
-def eliminar_mozo(lista_mozos,):
-    """Elimina mozos por ID"""
-    id_mozo = int(input("Ingrese el ID del mozo a eliminar: "))
-
-    indice = buscar_indice(lista_mozos, id_mozo)
-    
-    if indice != -1:
-        if len(lista_mozos[indice][2]) > 0:
-           print(f"El mozo {lista_mozos[indice][1]} todavia tiene mesas asignadas.")
-        else:
-           nombre_eliminado = lista_mozos[indice][1]
-           lista_mozos.pop(indice)
-           print(f"Mozo {nombre_eliminado} eliminado")
+    if nameCheck:
+        print("El mozo ya existe")
+        # input("Presione enter para continuar...")
+    elif nameEmpty:
+        print("El nombre del mozo no puede estar vacio")
+        # input("Presione enter para continuar...")
     else:
-        print("No se encontro un mozo con ese ID")
-    
-    return lista_mozos
+        nuevo_id = 1
+        if len(lista_mozos) > 0:
+            nuevo_id = lista_mozos[-1][0] + 1
+        
+        # Estructura de lista de mozos: [ID, Nombre, [Mesas], Recaudado]
 
-def agrupar_productos(codigos):
+        nuevo_mozo = [nuevo_id, nombre, [], 0]
+        lista_mozos.append(nuevo_mozo)
+        print(f"Mozo {nombre} fue agregado")
+        
+        return lista_mozos
+
+def eliminar_mozo(lista_mozos):
+    print("[Menu Principal > Mozos > *Eliminar Mozo*]")
+    print("")
+    id_mozo = input("Ingrese el ID del mozo a eliminar: ")
+    isNumber,id_mozo = checkAndConvertToInt(id_mozo)
+
+    if isNumber:
+        indice = buscar_indice(lista_mozos, id_mozo)
+        if indice != -1:
+            if len(lista_mozos[indice][2]) > 0:
+                print(f"El mozo {lista_mozos[indice][1]} todavia tiene mesas asignadas.")
+            else:
+                nombre_eliminado = lista_mozos[indice][1]
+                lista_mozos.pop(indice)
+                print(f"Mozo {nombre_eliminado} eliminado exitosamente")
+                input("Presione enter para continuar...")
+        else:
+            print("No se encontro un mozo con ese ID")
+            input("Presione enter para continuar...")
+        
+        return lista_mozos
+    else:
+        if id_mozo == "":
+            print("No se ingreso un ID")
+            input("Presione enter para continuar...")
+        else:
+            print("El ID ingresado no es un numero")
+            input("Presione enter para continuar...")
+            
+
+def agrupar_productos(codigos): #! Verificar si esto puede ser reemplazado por las funciones de bubbleSort
     """Toma una lista de codigos desordenada y la agrupa"""
 
     productos_unicos = []

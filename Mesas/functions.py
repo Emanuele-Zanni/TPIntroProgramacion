@@ -407,12 +407,15 @@ def printMesas(listaMesas, listaProductos):
     ]
     render_side_by_side(bloques, cols=4, padding=6)
 
-def printMesasOcupadas(listaMesas):
-    mesasOcupadas = []
+def printMesasActivas(listaMesas):
+    mesasActivas = []
     for i in range(len(listaMesas)):
         if listaMesas[i][2] == False:
-            mesasOcupadas.append(i+1)
-    print(f"Mesas Activas: {mesasOcupadas}")
+            mesasActivas.append(i+1)
+            
+    text = f"Mesas Activas: {mesasActivas}"
+    return mesasActivas,text
+
 
 def printMesasLibres(listaMesas):
     mesasLibres = []
@@ -429,6 +432,65 @@ def printMozosMesa(stats):
         text += f"\nMozo {stats[i][0]} x {stats[i][1]}"
 
     return text
+
+def editMesasQuantity(listaMesas,statsMesas):
+    mode,tableValue = tableSettingsMenu(listaMesas)
+    # print(tableValue)
+
+    newListaMesas = []
+    newStatsMesas = []
+    error = False
+
+    if mode == 1:
+        for i in range(tableValue):
+            listaMesas.append([0,[],True,0])
+            statsMesas.append([0,[],0])
+    elif mode == -1:
+        # print("Ingresando en caso de ELIMINAR MESAS")
+        newListaMesas = listaMesas.copy()
+        newStatsMesas = statsMesas.copy()
+        for i in range(tableValue):
+
+            if listaMesas[len(listaMesas)-1-i][2] == False:
+                error = True
+
+            if error == False:
+                newListaMesas.pop()
+                newStatsMesas.pop()
+
+    elif mode == 0:
+        print(f"No se realizaron cambios, la cantidad de mesas actual ya es {len(listaMesas)}")
+        input("Presione cualquier tecla para continuar...")
+    elif mode == 2:
+        print("Error general en la funcion")
+    elif mode == -2:
+        print(f"No se puede eliminar mas mesas de las existentes")
+        input("Presione cualquier tecla para continuar...")
+    elif mode == 4:
+        error = ""
+        print("No se puede ingresar un valor vacio")
+    elif mode == 5:
+        error = ""
+        print("El valor ingresado no es un numero")
+
+
+    if error == False:
+            if mode == -1:
+                listaMesas = newListaMesas
+                statsMesas = newStatsMesas
+            print("Cambio realizado con exito")
+            input("Presione cualquier tecla para continuar...")
+            return listaMesas, statsMesas
+    elif error:
+            print("Error, las mesas a eliminar deben estar vacias")
+            input("Presione cualquier tecla para continuar...")
+            return listaMesas, statsMesas
+    else:
+        input("Presione cualquier tecla para continuar...")
+        return listaMesas, statsMesas
+
+
+
 
 #! Este conjunto de Funciones tienen fines meramente esteticos y se encargan de formatear el texto y datos para una mejor visualizacion
 #* Esta variable determina el ancho de los printMesa()

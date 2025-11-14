@@ -5,7 +5,8 @@ def menu_mozos(lista_mozos):
     on = True
     while on:
         clearConsole()
-        print("""
+        print("""[Menu Principal > Mozos]
+              
 #######[ MENU MOZOS ]#######
 1) Ver Mozos
 2) Agregar Mozo
@@ -26,7 +27,6 @@ X) Volver al menú principal
         elif choice == "3":
             clearConsole()
             eliminar_mozo(lista_mozos)
-            input("\nPresione enter para continuar...")
         elif choice.lower() == "x":
             on = False
         else:
