@@ -103,45 +103,148 @@ def addProducto(listaProductos):
 
 
 def editProduct(listaProductos):
-    codigo = int(input("Ingrese codigo de producto a editar:"))
-    for producto in listaProductos:
-        print(producto)
-        if producto[0] == codigo:
-            print(f"1. Código: {producto[0]}")
-            print(f"2. Nombre: {producto[1]}")
-            print(f"3. Precio: {producto[2]}")
-            print(f"4. Cantidad: {producto[3]}")
-            op = int(input("Que desea editar? "))
-            #* Validar todos los casos de edicion
-            #* Acomodar array con Sort < a >
-            if op == 1:
-                nuevo = int(input("Ingrese nuevo codigo: "))
-                producto[0] = nuevo
-            elif op == 2:
-                nuevo = input("Ingrese nuevo nombre: ")
-                producto[1] = nuevo
-            elif op == 3:
-                nuevo = float(input("Ingrese nuevo precio: "))
-                producto[2] = nuevo
-            elif op == 4:
-                nuevo = int(input("Ingrese nueva cantidad: "))
-                producto[3] = nuevo
-            else:
-                print("Opción inválida")
+    print("[Menu Principal > Stock > *Editar Producto*]")
+    print("")
+    codigo = input("Ingrese codigo de producto a editar: ")
+    isNumber,codigo = checkAndConvertToInt(codigo)
 
-    return listaProductos
+
+    if isNumber:
+        isReal = isCodeReal(listaProductos, codigo)
+        if isReal:
+            clearConsole()
+            print("[Menu Principal > Stock > *Editar Producto*]")
+            print("")
+            for producto in listaProductos:
+                if producto[0] == codigo:
+                    print(f"1. Código => {producto[0]}")
+                    print(f"2. Nombre => {producto[1]}")
+                    print(f"3. Precio => {producto[2]}")
+                    print(f"4. Cantidad => {producto[3]}")
+                    op = input("Ingrese el numero del campo a editar: ")
+
+                    if op == "1": #* Validar que no se rompa el codigo en cada caso
+                        newCode = input("Ingrese nuevo codigo: ")
+                        isNumber,newCode = checkAndConvertToInt(newCode)
+
+                        if isNumber:
+                            isReal = isCodeReal(listaProductos, newCode)
+                            if isReal:
+                                print("El Código ingresado ya existe. Ingrese un nuevo código.")
+                                input("Presione enter para continuar...")
+                            else:
+                                producto[0] = newCode
+                                print("Código actualizado exitosamente")
+                                input("Presione enter para continuar...")
+                        elif newCode == "":
+                            print("El Código no puede estar vacio.")
+                            input("Presione enter para continuar...")
+                        else:
+                            print("El Código debe ser un numero entero. Ingrese un nuevo código.")
+                            input("Presione enter para continuar...")
+                    elif op == "2":
+                        newName = input("Ingrese nuevo nombre: ")
+                        isNumber,_= checkAndConvertToInt(newName)
+
+                        if newName == "":
+                            print("El Nombre no puede estar vacio.")
+                            input("Presione enter para continuar...")
+                        elif isNumber:
+                            print("El Nombre no puede comenzar con un numero.")
+                            input("Presione enter para continuar...")
+                        else:
+                            producto[1] = newName
+                            print("Nombre actualizado exitosamente")
+                            input("Presione enter para continuar...")
+                    elif op == "3":
+                        newPrice = input("Ingrese nuevo precio: ")
+                        isPrecioValid,newPrice = checkAndConvertToFloat(newPrice)
+                        if isPrecioValid:
+                            if newPrice <= 0:
+                                print("El Precio debe ser mayor a 0")
+                                input("Presione enter para continuar...")
+                            else:
+                                producto[2] = newPrice
+                                print("Precio actualizado exitosamente")
+                                input("Presione enter para continuar...")
+                        elif newPrice == "":
+                            print("El Precio no puede estar vacio.")
+                            input("Presione enter para continuar...")
+                        else:
+                            print("El Precio debe ser un numero.")
+                            input("Presione enter para continuar...")
+
+                    elif op == "4":
+                        newQuantity = input("Ingrese nueva cantidad: ")
+                        isNumber,newQuantity = checkAndConvertToInt(newQuantity)
+
+                        if isNumber:
+                                producto[3] = newQuantity
+                                print("Cantidad actualizada exitosamente")
+                                input("Presione enter para continuar...")
+                        elif newQuantity == "":
+                            print("La Cantidad no puede estar vacia.")
+                            input("Presione enter para continuar...")
+                        else:
+                            print("La Cantidad debe ser un numero entero.")
+                            input("Presione enter para continuar...")
+                    else:
+                        print("Opción inválida")
+                        input("Presione enter para continuar...")
+        else:
+            print(f"Producto con codigo {codigo} no encontrado.")
+            input("Presione enter para continuar...")
+    else:
+        print(f"Producto con codigo {codigo} no encontrado.")
+        input("Presione enter para continuar...")
+
+    # return listaProductos
 
  
 def deleteProduct(listaProductos):
-    codigo = int(input("Ingrese codigo de producto a eliminar:"))
-    #* Agregar confirmacion para delete
-    for producto in listaProductos:
-        if producto[0] == codigo:
-            listaProductos.remove(producto)
-            print(f"Producto con codigo {codigo} fue eliminado.")
-        else:
+    print("[Menu Principal > Stock > *Eliminar Producto*]")
+    print("")
+    codigo = input("Ingrese codigo de producto a eliminar: ")
+    isNumber,codigo = checkAndConvertToInt(codigo)
+
+    if isNumber:
+        productoEncontrado = ""
+        for producto in listaProductos:
+            if producto[0] == codigo:
+                productoEncontrado = producto
+
+        if productoEncontrado == "":
             print(f"Producto con codigo {codigo} no encontrado.")
-    return listaProductos
+            input("Presione enter para continuar...")
+        else:
+            clearConsole()
+            print(f"""[Menu Principal > Stock > *Eliminar Producto*]")
+                  
+• Codigo: {productoEncontrado[0]}
+• Nombre: {productoEncontrado[1]}
+• Precio: {productoEncontrado[2]}$
+• Cantidad: {productoEncontrado[3]}
+
+Esta seguro que desea eliminar el producto?
+1) Eliminar
+2) Cancelar""")
+            op = input("Ingrese una opcion: ")
+            if op == "1":
+                listaProductos.remove(productoEncontrado)
+                print(f"Producto eliminado exitosamente.")
+                input("Presione enter para continuar...")
+            elif op == "2":
+                print("Cancelando eliminacion de producto...")
+                input("Presione enter para continuar...")
+            else:
+                print("Opción inválida")
+                input("Presione enter para continuar...")
+    elif codigo == "":
+        print("El Codigo no puede estar vacio.")
+        input("Presione enter para continuar...")
+    else:
+        print(f"Producto con codigo {codigo} no encontrado.")
+        input("Presione enter para continuar...")
 
 def getProduct(listaProductos, codigo):
     isFound = False

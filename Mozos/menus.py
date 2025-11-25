@@ -1,7 +1,7 @@
 from Mozos.functions import *
 from General.functions import *
 
-def menu_mozos(lista_mozos):
+def menu_mozos(lista_mozos,mozoStats):
     on = True
     while on:
         clearConsole()
@@ -22,11 +22,11 @@ X) Volver al menú principal
             input("\nPresione enter para continuar...")
         elif choice == "2":
             clearConsole()
-            agregar_mozo(lista_mozos)
-            input("\nPresione enter para continuar...")
+            agregar_mozo(lista_mozos,mozoStats)
+            input("Presione enter para continuar...")
         elif choice == "3":
             clearConsole()
-            eliminar_mozo(lista_mozos)
+            eliminar_mozo(lista_mozos,mozoStats)
         elif choice.lower() == "x":
             on = False
         else:

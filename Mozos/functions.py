@@ -10,47 +10,60 @@ def buscar_indice(lista_mozos, id_mozo):
     return indice_encontrado
 
 def mostrar_mozos(lista_mozos):
-    """"Muestra una lista de todos los mozos con ID y nombre"""
+    # ordenarBubble(lista_mozos, "desc")
+
     print("--- LISTA DE MOZOS ---")
     for i in range(len(lista_mozos)):
         mozo = lista_mozos[i]
         print(f"ID: {mozo[0]} - Nombre: {mozo[1]} - Mesas: {mozo[2]}")
     print("----------------------")
 
-def agregar_mozo(lista_mozos):
+def agregar_mozo(lista_mozos,mozoStats):
+    print("[Menu Principal > Mozos > *Agregar Mozo*]")
+    print("")
+
     nameCheck = False
     nameEmpty = False
+    nameNumeric = False
 
-    nombre = input("Ingrese el nombre del nuevo mozo: ") #! Falta validacion por nombre vacio o numerico (debe ser un string NO vacio)
-    #! Tambien se debe validar por nombres y IDs repetidos
+    nombre = input("Ingrese el nombre del nuevo mozo: ")
 
-    for i in range(len(lista_mozos)):
-        if lista_mozos[i][1] == nombre:
-            nameCheck = True
     if nombre == "":
         nameEmpty = True
+    else:
+        if nombre[0].isnumeric():
+            print("El nombre del mozo no puede Iniciar con un numero")
+            nameNumeric = True
+
+        if nameNumeric == False:
+            for i in range(len(lista_mozos)):
+                if lista_mozos[i][1] == nombre:
+                    nameCheck = True
 
 
     if nameCheck:
-        print("El mozo ya existe")
-        # input("Presione enter para continuar...")
+            print("El mozo ya existe")
+            # input("Presione enter para continuar...")
     elif nameEmpty:
-        print("El nombre del mozo no puede estar vacio")
-        # input("Presione enter para continuar...")
+            print("El nombre del mozo no puede estar vacio")
+            input("Presione enter para continuar...")
     else:
-        nuevo_id = 1
-        if len(lista_mozos) > 0:
-            nuevo_id = lista_mozos[-1][0] + 1
-        
-        # Estructura de lista de mozos: [ID, Nombre, [Mesas], Recaudado]
+            nuevo_id = 1
+            if len(lista_mozos) > 0:
+                nuevo_id = lista_mozos[-1][0] + 1
+            
+            #* Estructura de lista de mozos: [ID, Nombre, [Mesas], Recaudado]
 
-        nuevo_mozo = [nuevo_id, nombre, [], 0]
-        lista_mozos.append(nuevo_mozo)
-        print(f"Mozo {nombre} fue agregado")
-        
-        return lista_mozos
+            nuevo_mozo = [nuevo_id, nombre, [], 0]
+            stats_mozo = [[0,0,0,0],[0,0,0,0]]
+            lista_mozos.append(nuevo_mozo)
+            mozoStats.append(stats_mozo)
+            print("")
+            print(f"Mozo '{nombre}' fue agregado")
+            
+            return lista_mozos
 
-def eliminar_mozo(lista_mozos):
+def eliminar_mozo(lista_mozos,mozoStats):
     print("[Menu Principal > Mozos > *Eliminar Mozo*]")
     print("")
     id_mozo = input("Ingrese el ID del mozo a eliminar: ")
@@ -64,13 +77,15 @@ def eliminar_mozo(lista_mozos):
             else:
                 nombre_eliminado = lista_mozos[indice][1]
                 lista_mozos.pop(indice)
-                print(f"Mozo {nombre_eliminado} eliminado exitosamente")
+                mozoStats.pop(indice)
+                print("")
+                print(f"Mozo '{nombre_eliminado}' eliminado exitosamente")
                 input("Presione enter para continuar...")
         else:
             print("No se encontro un mozo con ese ID")
             input("Presione enter para continuar...")
         
-        return lista_mozos
+        # return lista_mozos
     else:
         if id_mozo == "":
             print("No se ingreso un ID")

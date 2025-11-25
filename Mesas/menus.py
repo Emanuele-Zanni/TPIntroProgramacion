@@ -8,24 +8,31 @@ def mesasMenu():
 
 #########[ MENU MESAS ]#########
 1)Ver Salon
-2)Ver Delivery (NO HECHO)
-3)Ver Estadisticas
-4)Configurar cantidad de mesas
+2)Ver Delivery
+3)Configurar cantidad de mesas
 X)Volver al menu anterior
 #################################
 """)
             
         
 def salonMenu():
-    # limpiarConsola()
-    # clear_except_last(1)
-
     print("""[Menu Principal > Mesas > Salon]
           
 ##########[ MENU SALON ]##########
 1)Ver Mesas
 2)Levantar Mesa
 3)Seleccionar Mesa
+X)Volver al menu anterior
+#################################
+""")
+    
+def deliveryMenu():
+    print("""[Menu Principal > Mesas > Delivery]
+          
+##########[ MENU DELIVERY ]##########
+1)Ver Pedidos
+2)Levantar Pedido
+3)Seleccionar Pedido
 X)Volver al menu anterior
 #################################
 """)
@@ -42,12 +49,35 @@ X)Cancelar Operacion
 #################################
 """)
     
+def seleccionarMesaMenu(numMesa):
+    print(f"""
+#########[ OPERACIONES MESA {numMesa} ]#########
+1)Cobrar Mesa
+2)Anular Mesa
+3)Cambiar Mozo
+4)Mover Mesa
+5)Convertir hacia Delivery
+X)Cancelar Operacion
+#################################
+""")
+    
+def seleccionarPedidoMenu(numMesa):
+    print(f"""
+#########[ Operaciones Pedido {numMesa} ]#########
+1)Cobrar Pedido
+2)Anular Pedido
+3)Cambiar Mozo
+4)Convertir hacia Salon (No implementado)
+X)Cancelar Operacion
+#################################
+""")
+    
 def metodoPagoMenu():
     print(f"""
 #########[ Metodo de Pago ]#########
 1)Efectivo
 2)Tarjeta Debito 
-3)Tarjeta Credito (10% de intere )
+3)Tarjeta Credito (10% de interes?)
 4)Cheque
 5)Deuda
 X)Cancelar Operacion
