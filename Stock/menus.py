@@ -1,7 +1,7 @@
 from Stock.functions import *
 from General.functions import *
 
-def stockMenu(listaProductos):
+def stockMenu(listaProductos,prodStats):
     on = True
     while on:
         clearConsole()
@@ -24,14 +24,14 @@ X)Volver al menú principal
             input("Presione enter para continuar...")
         elif choice == "2":
             # clearConsole()
-            addProducto(listaProductos)
+            addProducto(listaProductos,prodStats)
         elif choice == "3":
             clearConsole()
             editProduct(listaProductos)
             # input("Presione enter para continuar...")
         elif choice == "4":
             clearConsole()
-            deleteProduct(listaProductos)
+            deleteProduct(listaProductos,prodStats)
         elif choice == "x" or choice == "X":
             print("Volver al menú principal")
             on = False

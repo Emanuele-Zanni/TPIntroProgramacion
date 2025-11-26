@@ -1,7 +1,7 @@
 from General.functions import *
 from Stock.validations import *
 
-def addProducto(listaProductos):
+def addProducto(listaProductos,prodStats):
 
     #! Validacion para todos los campos
 
@@ -100,6 +100,7 @@ def addProducto(listaProductos):
     if isProductValid:
         print(f"{nombre} fue agregado.")
         listaProductos.append([codigo, nombre, precio, cantidad])
+        prodStats.append([0, 0, 0, 0])
 
 
 def editProduct(listaProductos):
@@ -201,7 +202,7 @@ def editProduct(listaProductos):
     # return listaProductos
 
  
-def deleteProduct(listaProductos):
+def deleteProduct(listaProductos,prodStats):
     print("[Menu Principal > Stock > *Eliminar Producto*]")
     print("")
     codigo = input("Ingrese codigo de producto a eliminar: ")
@@ -231,6 +232,7 @@ Esta seguro que desea eliminar el producto?
             op = input("Ingrese una opcion: ")
             if op == "1":
                 listaProductos.remove(productoEncontrado)
+                prodStats.pop(listaProductos.index(productoEncontrado))
                 print(f"Producto eliminado exitosamente.")
                 input("Presione enter para continuar...")
             elif op == "2":

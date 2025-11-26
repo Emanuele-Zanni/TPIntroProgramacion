@@ -1,7 +1,8 @@
 from General.functions import *
 from Mozos.validations import *
 from Mesas.functions import *
-from Caja.menus import *
+import Caja.menus as menus
+
 
 def printInfoGeneral(mesas,pedidos,mozos,productos,e,td,tc,ch,d,ed,tdd,tcd,chd,dd):
     mesasActivas,_ = printMesasActivas(mesas)
@@ -35,9 +36,13 @@ Cantidad de Mozos = {len(mozos)}
 
 def printInfoMozos(): 
         print(f"""[Menu Principal > Caja > *Info Mozos*]
+              
 #########[ INFO MOZOS ]#########
 *Estadisticas generales / leaderboard / podio =
-            
+-Mostrar lista como la de INFO GENERAL, mostrar ingresos + porcentaje, mostrar mesas cobradas + porcentaje, mosrar pedidos cobrados + porcentaje
+-Lista debe actuar como un top 3 de mozos
+-Opcion "2)" para ver lista completa de TODOS los mozos rankeados?
+              
 1) Ver informacion de Mozo Particular
 X) Volver al Menu anterior
             
@@ -64,6 +69,8 @@ def infoMozosSubmenu(listaMozos,mozoStats):
 
     while mozosVar:
         clearConsole()
+        print("[Menu Principal > Caja > Info Mozos > *Info Mozo Particular*]")
+        print("")
         nombreMozo = input("Ingrese el codigo o nombre del mozo: ")
         isName,codigoMozo = isMozoNameValid(listaMozos,nombreMozo)
         isNum,numMozo = checkAndConvertToInt(nombreMozo)
@@ -95,7 +102,7 @@ def infoMesasSubmenu(mesas,statsMesas,dtc,cantPedidosVendidos,listaProductos,log
     on = True
     while on:
         clearConsole()
-        printInfoMesas(mesas,statsMesas,dtc,cantPedidosVendidos)
+        menus.printInfoMesas(mesas,statsMesas,dtc,cantPedidosVendidos)
         choice = input("Ingrese una opcion: ")
         if choice == "1": #! Ver Estadisticas de Mesa
             printMesaStats(mesas,statsMesas)
@@ -154,12 +161,15 @@ def printMesaStats(listaMesas,statsMesa):
     vecesLevantada = statsMesa[table-1][0]
     print(f"""
 #########[ DATOS MESA {table} ]#########
+
 Veces Levantada: {vecesLevantada}
 Veces Anulada??:
+Dinero Recaudado en Mesa: xx$
+Dinero Anulado en Mesa: xx$
 Mozos Asignados:{printMozosMesa(statsMesa[table-1][1])}
 Cant Productos Cargados: {statsMesa[table-1][2]}
+Cant Productos Anulados: xx
 Porcentaje de eleccion: {vecesLevantada*100 / (mesasVendidas or 1)}%
-algo%, que se divida la cant de veces levantada con el total de todas las mesas
 """)
     input("Presione enter para continuar...")
 
@@ -186,6 +196,8 @@ def verLogs(listaProductos,logs):
 
         
         if case == "noLog": #* Si no hay logs, no se muestra nada
+            print("[Menu Principal > Caja > Info Mesas > *Logs*]")
+            print("")
             print("No hay logs para mostrar")
             input("Presione enter para continuar...")
             on = False
@@ -249,3 +261,115 @@ def printTableOrAddress(logs,id):
         return f"Mesa: {logs[id-1][3]} | Mozo: {logs[id-1][4][0]}"
     else:
         return f"Direccion: {logs[id-1][3]} | Mozo: {logs[id-1][4][0]}"
+       
+def calcCantidadMesasSold(statsMesa):
+    total = 0
+    for i in range(len(statsMesa)):
+        total += statsMesa[i][0]
+    # print(f"total de mesas vendidas = {total}")
+    return total
+
+    
+
+def calcProductosMasyMenosVendidos(listaProductos,listaProductosVendidos):
+    CantidadProdsVendidos = len(listaProductosVendidos) #* Cantidad de productos vendidos total para calcular porcentajes
+
+    if CantidadProdsVendidos == 0:
+        return "Producto mas vendido: N/A","Producto menos vendido: N/A"
+    
+    #* Iterar la lista de codigos de productos desordenados para determinar productos unicos y guardarlos en uniqueProdList[]
+    uniqueProdList = []
+    for k in range(len(listaProductos)):
+        uniqueProdList.append(listaProductos[k][0])
+
+    #* Iterar nuevamente la lista con los codigos unicos y obtener la cantidad de veces que se vendio cada uno, y agruparlos en una lista (results) con Tuplas por cada Producto "[codigo, cantidad]"
+    results = []
+    quantity = 0
+    for i in range(len(uniqueProdList)):
+        for j in range(len(listaProductosVendidos)):
+            if uniqueProdList[i] == listaProductosVendidos[j]:
+                quantity += 1
+
+            if j == len(listaProductosVendidos) - 1:
+                aux = [uniqueProdList[i], quantity]
+                results.append(aux)
+                quantity = 0
+
+    #* Determinar productos mas y menos vendidos
+    masVendido=[]
+    menosVendido=[]
+    max=0
+    min=0
+    for i in range(len(results)):
+        if results[i][1] > max:
+            max = results[i][1]
+            masVendido = [results[i]]
+        elif results[i][1] == max:
+            masVendido.append(results[i])
+
+        if results[i][1] < min:
+            min = results[i][1]
+            menosVendido = [results[i]]
+        elif results[i][1] == min:
+            menosVendido.append(results[i])
+
+    # print(f"RESULTADOS ==> {results}")
+    # print(f"MAS VENDIDOS: {masVendido}")
+    # print(f"MENOS VENDIDOS: {menosVendido}")
+
+    #* Determinar producto mas vendido y devolver un texto con la info correcta segun el caso correspondiente (1 max vendido, 2 o 3 con mismo valor, 3 o mas con max valor)
+    if len(masVendido) == 1: 
+        item = getProduct(listaProductos, masVendido[0][0])
+        masVendidoText = f"Producto mas vendido: '{item[1]}' x {masVendido[0][1]} veces ({masVendido[0][1] * 100 / CantidadProdsVendidos}%)"
+    else:
+        if len(masVendido) > 3:
+            diff = len(masVendido) - 3
+            masVendidoText = "Productos mas vendidos: "
+            for i in range(len(masVendido)):
+                item = getProduct(listaProductos, masVendido[i][0]) 
+                if i == 0:
+                    masVendidoText += f"'{item[1]}'"
+                elif i != len(masVendido) - 1 and i < 3:
+                    masVendidoText += f", '{item[1]}' "
+            masVendidoText += f"y {diff} productos mas x {masVendido[i][1]} veces ({masVendido[i][1] * 100 / CantidadProdsVendidos}%)"
+        else:
+            masVendidoText = "Productos mas vendidos: "
+            for i in range(len(masVendido)):
+                item = getProduct(listaProductos, masVendido[i][0]) 
+                if i == 0:
+                    masVendidoText += f"'{item[1]}' "
+                elif i == len(masVendido) - 1:
+                    masVendidoText += f"y '{item[1]}'"
+                else:
+                    masVendidoText += f", '{item[1]}' "
+            masVendidoText += f" x {masVendido[i][1]} veces ({masVendido[i][1] * 100 / CantidadProdsVendidos}%)"
+
+
+    #* Determinar producto menos vendido y devolver un texto con la info correcta segun el caso correspondiente (1 min vendido, 2 o 3 con mismo valor, 3 o mas con min valor)
+    if len(menosVendido) == 1: 
+        item = getProduct(listaProductos, menosVendido[0][0])
+        menosVendidoText = f"Producto menos vendido: '{item[1]}' x {menosVendido[0][1]} veces ({menosVendido[0][1] * 100 / CantidadProdsVendidos}%)"
+    else:
+        if len(menosVendido) > 3:
+            diff = len(menosVendido) - 3
+            menosVendidoText = "Productos menos vendidos: "
+            for i in range(len(menosVendido)):
+                item = getProduct(listaProductos, menosVendido[i][0])
+                if i == 0:
+                    menosVendidoText += f"'{item[1]}'"
+                elif i != len(menosVendido) - 1 and i < 3:
+                    menosVendidoText += f", '{item[1]}' "
+            menosVendidoText += f"y {diff} productos mas x {menosVendido[i][1]} veces ({menosVendido[i][1] * 100 / CantidadProdsVendidos}%)"
+        else:
+            menosVendidoText = "Productos menos vendidos: "
+            for i in range(len(menosVendido)):
+                item = getProduct(listaProductos, menosVendido[i][0]) 
+                if i == 0:
+                    menosVendidoText += f"'{item[1]}'"
+                elif i == len(menosVendido) - 1:
+                    menosVendidoText += f"y '{item[1]}'"
+                else:
+                    menosVendidoText += f", '{item[1]}' "
+            menosVendidoText += f" x {menosVendido[i][1]} veces ({menosVendido[i][1] * 100 / CantidadProdsVendidos}%)"
+    
+    return masVendidoText,menosVendidoText

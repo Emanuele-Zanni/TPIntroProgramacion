@@ -9,6 +9,6 @@ def mainMenu():
 2)Ver Mozos
 3)Ver Stock
 4)Ver Caja
-5)Finalizar Dia (NO HECHO)
+5)Finalizar Dia
 #################################
 """)
