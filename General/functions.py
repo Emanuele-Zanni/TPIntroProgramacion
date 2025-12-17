@@ -41,4 +41,5 @@ def checkAndConvertToFloat(value):
     else:
         return False,value
     
-
+def pct(parte, total):
+    return round(parte * 100 / (total or 1))

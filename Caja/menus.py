@@ -1,6 +1,7 @@
 from Stock.functions import *
 from Caja.functions import *
 from Caja.menus import *
+from General.functions import *
 
 def cajaMenu():
 
@@ -15,60 +16,69 @@ X) Volver al menu anterior
 #################################
 """)
 
-def printInfoMesas(listaMesas,statsMesa,dtc,pedidosVendidos): 
+def printInfoMesas(listaMesas,statsMesa,prodStats,dtc,pedidosVendidos,pedidosAnulados): 
     mesasVendidas = calcCantidadMesasSold(statsMesa)
+    mesasAnuladas = calcCantidadMesasAnuladas(statsMesa)
+    productosAnuladosSalon,productosAnuladosDelivery = calcCantidadProductosAnulados(prodStats)
     cantidadTotalVenida = mesasVendidas + pedidosVendidos
 
-    print(f"""
-[Menu Principal > Caja > Info Mesas]
+    print(f"""[Menu Principal > Caja > *Info Mesas*]
           
 #########[ INFO MESAS ]#########
 Cantidad Mesas LEVANTADAS, no cobradas (fixear logica) = {mesasVendidas}
 Cantidad Deliveries Cobrados = {pedidosVendidos}
-Porcentaje Salon/Delivery = {mesasVendidas * 100 / (cantidadTotalVenida or 1)}% / {pedidosVendidos * 100 /(cantidadTotalVenida or 1)}%
-Pedidos Anulados Salon/Delivery =
-Productos Anulados Salon/Delivery  =
-Costo total Anlaciones Salon/Delivery =
+Porcentaje Salon/Delivery = {pct(mesasVendidas, cantidadTotalVenida)}% / {pct(pedidosVendidos, cantidadTotalVenida)}%
+Mesas/Pedidos Anulados Salon/Delivery = {mesasAnuladas} / {pedidosAnulados}
+Productos Anulados Salon/Delivery  = {productosAnuladosSalon} / {productosAnuladosDelivery}
           
 Costo promedio por mesa = {dtc/(calcCantidadMesasSold(statsMesa) or 1)}$
-
-Mesas mas utilizadas + porcentajes (top 3? funcion para calcular)=
-boton "3)" para ver lista de Mesas COMPLETA
           
         
-1)Ver Estadisticas de Mesas
-2)Ver Logs
-X)Volver al menu anterior
+1) Ver Estadisticas de Mesas
+2) Ver Logs
+X) Volver al menu anterior
           
 ##################################
 """)
+    
 
 def printInfoStock(listaProductos,codigosProductosVendidos,prodStats):
-    clearConsole()
-    maxSold,minSold=calcProductosMasyMenosVendidos(listaProductos,codigosProductosVendidos)
-    print(f"""
-##########[ INFO STOCK ]##########
+    on = True
+    while on:
+        clearConsole()
+        print("[Menu Principal > Caja > *Info Stock*]")
+        print("")
+        maxSold,minSold=calcProductosMasyMenosVendidos(listaProductos,codigosProductosVendidos)
+        print(f"""##########[ INFO STOCK ]##########
 {maxSold}
 {minSold}
 
-          
+            
 1) Ver lista comparativa de productos
 2) Ver informacion de producto particular
-cantidad de veces vendido + porcentaje de stock vendido =
-cantidad de veces anulado + porcentaje de stock anulado =
-X)Volver al menu anterior
-{printProducts(listaProductos,codigosProductosVendidos)}
-
-##################################""")
-    listaComparativaProductos(listaProductos,codigosProductosVendidos,prodStats)
-    
-def pct(parte, total):
-    return parte * 100 / (total or 1)
+X) Volver al menu anterior
+##################################
+""")
+        choice = input("Ingrese una opcion: ")
+        if choice == "1":
+            listaComparativaProductos(listaProductos,codigosProductosVendidos,prodStats)
+            input("Presione enter para volver al menu anterior.")
+        elif choice == "2":
+            pass
+        elif choice == "X" or choice == "x":
+            on = False
+        else:
+            print("Opcion invalida")
+            input("Presione enter para continuar...")
+    # {printProducts(listaProductos,codigosProductosVendidos)}
 
     
 def listaComparativaProductos(listaProductos,codigosProductosVendidos,prodStats):
+    clearConsole()
+    print("[Menu Principal > Caja > Info Stock > *Lista Comparativa de Productos*]")
+    print("")
     tabla = [
-        ["PRODUCTO", "STOCK",  "Vnt. SALON / DELIVERY" ,     "Anul. SALON / DELIVERY",  "% Stock Vendido", "% Stock Anulado", "% Stock Restante" ],
+        ["NOMBRE DEL PRODUCTO", "STOCK",  "Vnt. SALON / DELIVERY" ,     "Anul. SALON / DELIVERY",  "% Stock Vendido", "% Stock Anulado", "% Stock Restante" ],
         "SEPARADOR"
     ]
 

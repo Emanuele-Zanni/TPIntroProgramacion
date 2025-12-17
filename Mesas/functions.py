@@ -4,6 +4,7 @@ from General.functions import *
 from Mozos.validations import *
 from Mesas.validations import *
 from Mesas.menus import *
+from Mesas.functions import *
 from datetime import datetime #* Funcion para obtener la hora actual
 
 
@@ -119,25 +120,12 @@ def levantarMesa(listaMesas,listaMozos,listaProductos,mesaStats,prodsTutorial):
                 mesaStats[numMesa-1][2] += cantidadProductos  #* Cantidad de Productos cargados
                 ordenarBubble(pedidosMesa,"desc")
         
-def anularMesa(listaMesas, listaMozos):
-    print("Anular Mesa")
+def anularMesa(listaMesas,listaMozos,listaProductos,mesaStats,prodStats,pedidosAnulados,numMesa,place):
     isValid=True
-    table = input("Seleccione la mesa a anular: ")
-    isNumber,table = checkAndConvertToInt(table)
-
-    if isNumber:
-        isValid = isMesaReal(listaMesas,table)
-        if isValid == False:
-            print("Mesa no encontrada")
-                                
-        if isValid:
-            isEmpty = isMesaEmpty(listaMesas,table)
-            if isEmpty:
-                isValid=False
                                     
-        if isValid:
-            listaMesas[table-1] = [0,"",True,0]
-            id_mozo_asignado = listaMesas[table-1][0] # Obtiene el ID del mozo de esa mesa
+    if isValid:
+            #* Que carajo es esto
+            id_mozo_asignado = listaMesas[numMesa-1][0] # Obtiene el ID del mozo de esa mesa
             if id_mozo_asignado != 0:
                 indice_mozo = buscar_indice(listaMozos, id_mozo_asignado)
                 if indice_mozo != -1:
@@ -148,23 +136,51 @@ def anularMesa(listaMesas, listaMozos):
                     indice_mesa_en_mozo = -1
                     j = 0
                     while j < len(lista_mesas_mozo) and indice_mesa_en_mozo == -1:
-                        if lista_mesas_mozo[j] == table: # 'table' es el numMesa (ej: 1, 2, 3)
+                        if lista_mesas_mozo[j] == numMesa: # 'table' es el numMesa (ej: 1, 2, 3)
                             indice_mesa_en_mozo = j
                         j += 1
                         
                     if indice_mesa_en_mozo != -1:
                         lista_mesas_mozo.pop(indice_mesa_en_mozo)   
-            print("Mesa anulada exitosamente")
 
-        elif isValid == False:
-            print("Error al anular mesa")
-    else:
-        print("El numero de mesa debe ser un numero entero")
-        input("Presione enter para continuar...")
+            productosDeMesa = listaMesas[numMesa-1][1]
+            if place == "Salon":
+                #* Actualizar Stats de Mesa particular
+                mesaStats[numMesa-1][6] += 1 #* Veces Anulada
+                mesaStats[numMesa-1][3] += len(productosDeMesa) #* Cantidad de Productos anulados
+                mesaStats[numMesa-1][5] += listaMesas[numMesa-1][3] #* Valor Total de Anulacion
+
+
+                #* Actualizar Stats de Productos
+                prodStats = updateProdStats(listaProductos,prodStats,productosDeMesa,"Anular","Salon")
+
+
+                listaMesas[numMesa-1] = [0,"",True,0]
+                print("Mesa anulada exitosamente")
+                input("Presione enter para continuar...")
+            elif place == "Delivery":
+                #* Actualizar Stats de Productos
+                prodStats = updateProdStats(listaProductos,prodStats,productosDeMesa,"Anular","Delivery")
+                ajustarStock(listaProductos,productosDeMesa)
+
+                pedidosAnulados += 1
+
+                listaMesas.pop(numMesa-1)
+
+                print("Pedido anulado exitosamente")
+                input("Presione enter para continuar...")
+
+                return pedidosAnulados
+
+    elif isValid == False:
+        print("Error al anular mesa")
+    # else:
+    #     print("El numero de mesa debe ser un numero entero")
+    #     input("Presione enter para continuar...")
 
 
 
-def cobrarMesa(listaMesas,listaMozos,listaProductos,table,e,td,tc,ch,d,totalCaja,productosVendidos,logs):
+def cobrarMesa(listaMesas,listaMozos,listaProductos,prodStats,table,e,td,tc,ch,d,totalCaja,productosVendidos,logs):
     isValid=True
     # table = int(input("Seleccione la mesa a cobrar: "))
 
@@ -246,13 +262,41 @@ def cobrarMesa(listaMesas,listaMozos,listaProductos,table,e,td,tc,ch,d,totalCaja
             time = datetime.now().strftime("%H:%Mhs")
             newLog = [time,"Salon",metodoPagoElegido,table,listaMesas[table-1]]
             logs.append(newLog)
-            print(f"LOGS = {logs}")
+            # print(f"LOGS = {logs}")
+
+            ajustarStock(listaProductos,listaMesas[table-1][1])
+            prodStats = updateProdStats(listaProductos,prodStats,listaMesas[table-1][1],"Cobrar","Salon")
 
             resetMesa(listaMesas,table) #* Reseteo de los valores de la mesa
+            #* MesasVendidas +1 ??????
             
         return e,td,tc,ch,d,totalCaja,productosVendidos
     elif isValid == False:
         print("Error al cobrar mesa")
+
+def updateProdStats(listaProductos,prodStats,pedidosMesa,mode,place):
+    pedidosMesa = agruparProductos(pedidosMesa)
+
+    for i in range(len(pedidosMesa)):
+        # for j in range(len(prodStats)):
+        producto = getProduct(listaProductos,pedidosMesa[i][0])
+        indice = listaProductos.index(producto)
+
+        if mode == "Cobrar":
+            if place == "Salon":
+                prodStats[indice][0] += pedidosMesa[i][1]
+                print(f"Valor de prodStats[{indice}][0] = {prodStats[indice][0]}")
+            elif place == "Delivery":
+                prodStats[indice][2] += pedidosMesa[i][1]
+        elif mode == "Anular":
+            if place == "Salon":
+                prodStats[indice][1] += pedidosMesa[i][1]
+                print(f"Valor de prodStats[{indice}][0] = {prodStats[indice][0]}")
+            elif place == "Delivery":
+                prodStats[indice][3] += pedidosMesa[i][1]
+
+    return prodStats
+
 
 def ajustarStock(listaProductos,codigos):
     uniqueProdList = []
@@ -278,10 +322,33 @@ def ajustarStock(listaProductos,codigos):
         for j in range(len(listaProductos)):
             if results[i][0] == listaProductos[j][0]:
                 listaProductos[j][3] -= results[i][1]
-                #! ACA ME QUEDE, tesetar si funca, si modifica listaProductos realmente
+                print(f"Stock de {listaProductos[j][1]} actualizado a {listaProductos[j][3]}")
+
+def agruparProductos(codigos): #* esto hay que usarlo en VARIAS funciones
+    uniqueProdList = []
+    for k in range(len(codigos)):
+        if codigos[k] not in uniqueProdList:
+            uniqueProdList.append(codigos[k])
+            # print(f"Codigo {codigos[k]} guardado en lista")
+
+    results = []
+    quantity = 0
+    for i in range(len(uniqueProdList)):
+        for j in range(len(codigos)):
+            if uniqueProdList[i] == codigos[j]:
+                # print(uniqueProdList[i])
+                quantity += 1
+
+            if j == len(codigos) - 1:
+                aux = [uniqueProdList[i], quantity]
+                results.append(aux)
+                quantity = 0
+
+    return results
 
 
-def cobrarPedido(listaMesas,listaMozos,listaProductosVendidos,pedido,e,td,tc,ch,d,totalCaja,pedidosVendidos,logs):
+
+def cobrarPedido(listaMesas,listaMozos,listaProductos,mozoStats,prodStats,listaProductosVendidos,pedido,e,td,tc,ch,d,totalCaja,pedidosVendidos,logs):
     isValid=True
     # table = int(input("Seleccione la mesa a cobrar: "))
 
@@ -316,11 +383,15 @@ def cobrarPedido(listaMesas,listaMozos,listaProductosVendidos,pedido,e,td,tc,ch,
 
         hasPaid = False
         while hasPaid == False:
+            clearConsole()
+            print("[Menu Principal > Mesas > Delivery > *Seleccionar Mesa*]\n")
+            mesa = printMesa(listaMesas,listaProductos,pedido,True)
+            print(mesa)
             metodoPagoMenu()
             choice = input("Seleccione el metodo de pago: ")
             
             total = listaMesas[pedido-1][3]
-            print(f"Total: {total}")
+            # print(f"Total: {total}")
 
             if choice == "1": #! Metodo de pago = Efectivo
                 e += total
@@ -364,7 +435,16 @@ def cobrarPedido(listaMesas,listaMozos,listaProductosVendidos,pedido,e,td,tc,ch,
             time = datetime.now().strftime("%H:%Mhs")
             newLog = [time,"Delivery",metodoPagoElegido,listaMesas[pedido-1][2],listaMesas[pedido-1]]
             logs.append(newLog)
-            print(f"LOGS = {logs}")
+            # print(f"LOGS = {logs}")
+
+            #? Actualizo las stats de mozoStats
+            numMozo = listaMesas[pedido-1][0]   #* Obtiene el numero de mozo correspondiente a la mesa
+            mozoStats[numMozo-1][1][0] += 1 #* Suma +1 a la Stat "Deliveries Cobrados" de ese mozo
+            #? [mozoStats]: Suma el costo total de la mesa a la stat "Dinero recaudado Delivery"
+            mozoStats[numMozo-1][1][1] += listaMesas[pedido-1][3] #* Suma +1 a la stat 
+
+            ajustarStock(listaProductos,listaMesas[pedido-1][1])
+            prodStats = updateProdStats(listaProductos,prodStats,listaMesas[pedido-1][1],"Cobrar","Delivery")
 
             listaMesas.pop(pedido-1)
             pedidosVendidos += 1
@@ -428,28 +508,52 @@ def getMesa(listaMesas,mesa):
     return listaMesas[mesa-1]
 
 
-def cambiarMozo(listaMesas,listaMozos):
+def cambiarMozo(listaMesas,listaMozos,table):
     noErrors=True
-    table = int(input("Seleccione una mesa: "))
-    isValid = isMesaReal(listaMesas,table)
-    if isValid == False:
-        noErrors=False
-                            
-    if noErrors == True:
-        isValid = isMesaEmpty(listaMesas,table) #! el nombre isValid aca es confuso, pero me facilita el manejo de los IFs
-        if isValid == True:
-            print("Mesa vacia")
-            noErrors=False
-                            
-    if noErrors == True:
-        waiter = int(input("Seleccione el nuevo mozo a asignar: "))
-        isValid = isMozoValid(listaMesas,waiter)
-        if isValid == False:
-            print("Mozo no encontrado")
-            noErrors=False
+    mozoViejo = listaMesas[table-1][0]
 
-        if noErrors == True:
-            listaMesas[table-1][0] = waiter
+    # table = int(input("Seleccione una mesa: "))
+    # isValid = isMesaReal(listaMesas,table)
+    # if isValid == False:
+    #     noErrors=False
+                            
+    # if noErrors == True:
+    #     isValid = isMesaEmpty(listaMesas,table) #! el nombre isValid aca es confuso, pero me facilita el manejo de los IFs
+    #     if isValid == True:
+    #         print("Mesa vacia")
+    #         noErrors=False
+                            
+    if noErrors == True:
+        waiter = input("Ingrese nombre o codigo del nuevo mozo a asignar: ")
+        nombreMozo = waiter
+        isNumber,waiter = checkAndConvertToInt(waiter)
+
+        if isNumber:
+            isValid = isMozoValid(listaMesas,waiter)
+            if isValid == False:
+                print(f"Mozo con codigo {waiter} no encontrado")
+                input("Presione enter para continuar...")
+                noErrors=False
+
+            if noErrors == True:
+                listaMesas[table-1][0] = waiter
+                print(f"Mozo {mozoViejo} cambiado exitosamente por Mozo {waiter}")
+                input("Presione enter para continuar...")
+        else:
+            isValid,waiter=isMozoNameValid(listaMozos,waiter)
+            if isValid:
+                listaMesas[table-1][0] = waiter
+                print(f"Mozo {mozoViejo} cambiado exitosamente por Mozo {waiter}")
+                input("Presione enter para continuar...")
+            elif nombreMozo != "":
+                print(f"Mozo con nombre '{nombreMozo}' no encontrado")
+                input("Presione enter para continuar...")
+            else:
+                print("El valor ingresado no puede estar vacio")
+                input("Presione enter para continuar...")
+
+
+    return listaMesas
 
 def printCargaProdsTutorial():
     clearConsole()
@@ -586,7 +690,7 @@ def editMesasQuantity(listaMesas,statsMesas):
     if mode == 1:
         for i in range(tableValue):
             listaMesas.append([0,[],True,0])
-            statsMesas.append([0,[],0])
+            statsMesas.append([0,[],0,0,0,0,0])
     elif mode == -1:
         # print("Ingresando en caso de ELIMINAR MESAS")
         newListaMesas = listaMesas.copy()
@@ -708,8 +812,14 @@ def levantarPedido(listaPedidos,listaMozos,listaProductos,stats,prodsTutorial):
                     if isNumber:
                         producto = getProduct(listaProductos,codigo)
                         if producto != "":
-                            pedidosMesa.append(producto[0])
-                            cantidadProductos += 1
+                            stockAvaible = checkStock(producto,pedidosMesa)
+
+                            if stockAvaible:
+                                pedidosMesa.append(producto[0])
+                                cantidadProductos += 1
+                            else:
+                                print("No hay mas stock disponible de este producto")
+                                input("Presione enter para continuar...")
                         else:
                             # print("Codigo de producto no encontrado")
                             input("Presione enter para continuar...")
@@ -734,7 +844,7 @@ def levantarPedido(listaPedidos,listaMozos,listaProductos,stats,prodsTutorial):
                 if indice_mozo != -1:
                     listaMozos[indice_mozo][2].append(numMesa)
 
-def seleccionarMesa(mesas,productos,mozos,mozoStats,ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos,logs):
+def seleccionarMesa(mesas,productos,mozos,mesaStats,prodStats,mozoStats,ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos,logs):
                     clearConsole()
                     isEmpty=False
                     isReal=False
@@ -760,47 +870,50 @@ def seleccionarMesa(mesas,productos,mozos,mozoStats,ec,tdc,tcc,cc,dc,dtc,listaPr
                             isEmpty = isMesaEmpty(mesas,numMesa)
 
                         if isReal and not isEmpty:
-                            mesa = printMesa(mesas,productos,numMesa,True)
-                            if isReal:
-                                seleccionarMesaVar=True
-                                while seleccionarMesaVar:
-                                    clearConsole()
-                                    print("[Menu Principal > Mesas > Salon > *Seleccionar Mesa*]")
-                                    print("")
-                                    print(mesa)
-                                    seleccionarMesaMenu(numMesa)
-                                    choice = input("Ingrese una opcion: ")
-                                    if choice == "1": #* Cobrar Mesa
+                            # if isReal:
+                            seleccionarMesaVar=True
+                            while seleccionarMesaVar:
+                                mesa = printMesa(mesas,productos,numMesa,True)
+                                clearConsole()
+                                print("[Menu Principal > Mesas > Salon > *Seleccionar Mesa*]")
+                                print("")
+                                print(mesa)
+                                seleccionarMesaMenu(numMesa)
+                                choice = input("Ingrese una opcion: ")
+                                if choice == "1": #! Cobrar Mesa
 
-                                        #? [mozoStats]: Sumar +1 a la stat "Mesas Cobradas Salon"
-                                        numMozo = mesas[numMesa-1][0]   #* Obtiene el numero de mozo correspondiente a la mesa
-                                        mozoStats[numMozo-1][0][0] += 1 #* Suma +1 a la Stat "Mesas Cobradas Salon" de ese mozo
+                                    #? [mozoStats]: Sumar +1 a la stat "Mesas Cobradas Salon"
+                                    numMozo = mesas[numMesa-1][0]   #* Obtiene el numero de mozo correspondiente a la mesa
+                                    mozoStats[numMozo-1][0][0] += 1 #* Suma +1 a la Stat "Mesas Cobradas Salon" de ese mozo
+                                    
+                                    #? [mozoStats]: Suma el costo total de la mesa a la stat "dinero recaudado Salon"
+                                    numMozo = mesas[numMesa-1][0]           # Dinero recaudado
+                                    mozoStats[numMozo-1][0][1] += mesas[numMesa-1][3]  
                                         
-                                        #? [mozoStats]: Suma el costo total de la mesa a la stat "dinero recaudado Salon"
-                                        numMozo = mesas[numMesa-1][0]           # Dinero recaudado
-                                        mozoStats[numMozo-1][0][1] += mesas[numMesa-1][3]  
-                                            
-                                        ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos=cobrarMesa(mesas,mozos,productos,numMesa,ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos,logs)
+                                    ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos=cobrarMesa(mesas,mozos,productos,prodStats,numMesa,ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos,logs)
 
-                                        input("Presione enter para volver al menu anterior...")
-                                        seleccionarMesaVar=False
-                                    elif choice == "2": #* Anular Mesa
-                                        anularMesa(mesas,mozos)
-                                    elif choice == "3": #* Cambiar Mozo
-                                        cambiarMozo(mesas,mozos)
-                                        #* Variable de cambio de mozo +1?
-                                    elif choice == "4": #* Mover Mesa
-                                        moverMesa(mesas)
-                                    elif choice == "5": #* Convertir Delivery/Salon
-                                        print("Convertir Delivery/Salon")
-                                        table = int(input("Seleccione la mesa a convertir: "))
-                                        print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, ec)")
-                                    elif choice == "x" or choice == "X": #* Volver al menu anterior
-                                        isReal=False
-                                        seleccionarMesaVar=False
-                                    else:
-                                        print("Opcion invalida")
-                                        input("Presione enter para volver al menu anterior...")
+                                    input("Presione enter para volver al menu anterior...")
+                                    seleccionarMesaVar=False
+                                elif choice == "2": #* Anular Mesa
+                                    #* Agregar confirmacion??
+                                    anularMesa(mesas,mozos,productos,mesaStats,prodStats,"",numMesa,"Salon")
+                                    seleccionarMesaVar=False
+                                elif choice == "3": #* Cambiar Mozo
+                                    cambiarMozo(mesas,mozos,numMesa)
+                                    # seleccionarMesaVar=False
+                                elif choice == "4": #* Mover Mesa
+                                    moverMesa(mesas,numMesa)
+                                    # seleccionarMesaVar=False
+                                elif choice == "5": #* Convertir Delivery/Salon
+                                    print("Convertir Delivery/Salon")
+                                    table = int(input("Seleccione la mesa a convertir: "))
+                                    print("Funcion para pushear mesa a lista de deliveries, ajustando los datos correspondientes (mozo, precios, ec)")
+                                elif choice == "x" or choice == "X": #* Volver al menu anterior
+                                    isReal=False
+                                    seleccionarMesaVar=False
+                                else:
+                                    print("Opcion invalida")
+                                    input("Presione enter para volver al menu anterior...")
                         elif isEmpty:
                             print(f"La Mesa {numMesa} esta vacia")
                             input("Presione enter para volver al menu anterior...")
@@ -813,7 +926,7 @@ def seleccionarMesa(mesas,productos,mozos,mozoStats,ec,tdc,tcc,cc,dc,dtc,listaPr
 
                     return ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos
 
-def seleccionarPedido(mesas,productos,mozos,mozoStats,listaProductosVendidos,ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos,logs):
+def seleccionarPedido(mesas,productos,mozos,prodStats,mozoStats,listaProductosVendidos,ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos,pedidosAnulados,logs):
                     clearConsole()
                     isEmpty=False
                     isReal=False
@@ -849,20 +962,11 @@ def seleccionarPedido(mesas,productos,mozos,mozoStats,listaProductosVendidos,ecd
                                     seleccionarMesaMenu(numMesa) #! TROCAR
                                     choice = input("Ingrese una opcion: ")
                                     if choice == "1": #! Cobrar Pedido
-
-                                        numMozo = mesas[numMesa-1][0]   #* Obtiene el numero de mozo correspondiente a la mesa
-                                        print(f"Num Mozo: {numMozo}")
-                                        #? [mozoStats]: Sumar +1 a la stat "Mesas Cobradas Delivery"
-                                        mozoStats[numMozo-1][1][0] += 1 #* Suma +1 a la Stat "Mesas Cobradas Salon" de ese mozo
-                                        #? [mozoStats]: Suma el costo total de la mesa a la stat "Dinero recaudado Delivery"
-                                        mozoStats[numMozo-1][1][1] += mesas[numMesa-1][3]  
-                                            
-                                        ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos=cobrarPedido(mesas,mozos,listaProductosVendidos,numMesa,ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos,logs)
-
+                                        ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos=cobrarPedido(mesas,mozos,productos,mozoStats,prodStats,listaProductosVendidos,numMesa,ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos,logs)
                                         input("Presione enter para volver al menu anterior...")
                                         seleccionarMesaVar=False
                                     elif choice == "2": #* Anular Mesa
-                                        anularMesa(mesas,mozos)
+                                        pedidosAnulados=anularMesa(mesas,mozos,productos,"",prodStats,pedidosAnulados,numMesa,"Delivery")
                                     elif choice == "3": #* Cambiar Mozo
                                         cambiarMozo(mesas,mozos)
                                         #* Variable de cambio de mozo +1?
@@ -886,10 +990,10 @@ def seleccionarPedido(mesas,productos,mozos,mozoStats,listaProductosVendidos,ecd
                             print(f"La Mesa {numMesa} no existe")
                             input("Presione enter para volver al menu anterior...")
 
-                    return ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos
+                    return ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos,pedidosAnulados
 
 
-def Salon(mesas,mozos,productos,statsMesas,mozoStats,cargaProdTutorial,listaProductosVendidos,ec,tdc,tcc,cc,dc,dtc,logs):
+def Salon(mesas,mozos,productos,statsMesas,mozoStats,prodStats,cargaProdTutorial,listaProductosVendidos,ec,tdc,tcc,cc,dc,dtc,logs):
     salonMenuVar=True
     while salonMenuVar: 
         clearConsole()
@@ -903,7 +1007,7 @@ def Salon(mesas,mozos,productos,statsMesas,mozoStats,cargaProdTutorial,listaProd
             levantarMesa(mesas,mozos,productos,statsMesas,cargaProdTutorial)
             cargaProdTutorial=False
         elif choice == "3": #! Seleccionar Mesa
-            ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos=seleccionarMesa(mesas,productos,mozos,mozoStats,ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos,logs)
+            ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos=seleccionarMesa(mesas,productos,mozos,statsMesas,prodStats,mozoStats,ec,tdc,tcc,cc,dc,dtc,listaProductosVendidos,logs)
         elif choice == "x" or choice == "X": #! Volver al Menu Principal
             salonMenuVar = False
         else:
@@ -911,7 +1015,7 @@ def Salon(mesas,mozos,productos,statsMesas,mozoStats,cargaProdTutorial,listaProd
             input("Presione cualquier tecla para continuar...")
     return ec,tdc,tcc,cc,dc,dtc,cargaProdTutorial,listaProductosVendidos
 
-def Delivery(listaPedidos,listaMozos,listaProductos,mozoStats,listaProductosVendidos,ecd,tdcd,tccd,ccd,dcd,dtcd,prodsTutorial,pedidosVendidos,logs):
+def Delivery(listaPedidos,listaMozos,listaProductos,mozoStats,prodStats,listaProductosVendidos,ecd,tdcd,tccd,ccd,dcd,dtcd,prodsTutorial,pedidosVendidos,pedidosAnulados,logs):
     on = True
     while on:
         clearConsole()
@@ -924,13 +1028,31 @@ def Delivery(listaPedidos,listaMozos,listaProductos,mozoStats,listaProductosVend
         elif opcion == "2": #* Levantar Pedido
             levantarPedido(listaPedidos,listaMozos,listaProductos,mozoStats,prodsTutorial)
         elif opcion == "3": #* Seleccionar Pedido
-            ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos=seleccionarPedido(listaPedidos,listaProductos,listaMozos,mozoStats,listaProductosVendidos,ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos,logs) #! cadena de returns?
+            ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos,pedidosAnulados=seleccionarPedido(listaPedidos,listaProductos,listaMozos,prodStats,mozoStats,listaProductosVendidos,ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos,pedidosAnulados,logs) #! cadena de returns?
         elif opcion == "x" or opcion == "X": #* Volver al Menu Principal
             on = False
         else:
             print("Opcion invalida")
             input("Presione cualquier tecla para continuar...")
-    return ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos
+    return ecd,tdcd,tccd,ccd,dcd,dtcd,pedidosVendidos,pedidosAnulados
+
+def checkStock(producto,codigos):
+    cantidadEncontrada = 0
+    for i in range(len(codigos)):
+        if producto[0] == codigos[i]:
+            cantidadEncontrada += 1
+
+    # print(f"Cantidad encontrada: {cantidadEncontrada}")
+    # print(f"Stock: {producto[3]}")
+    # input("Presione enter para continuar...")
+
+    cantidadStock = producto[3]
+
+    if cantidadEncontrada >= cantidadStock:
+        return False
+    else:
+        return True
+    
            
 
 

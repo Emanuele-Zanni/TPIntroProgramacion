@@ -7,10 +7,10 @@ def mesasMenu():
     print("""[Menu Principal > Mesas]
 
 #########[ MENU MESAS ]#########
-1)Ver Salon
-2)Ver Delivery
-3)Configurar cantidad de mesas
-X)Volver al menu anterior
+1) Ver Salon
+2) Ver Delivery
+3) Configurar cantidad de mesas
+X) Volver al menu anterior
 #################################
 """)
             
@@ -19,10 +19,10 @@ def salonMenu():
     print("""[Menu Principal > Mesas > Salon]
           
 ##########[ MENU SALON ]##########
-1)Ver Mesas
-2)Levantar Mesa
-3)Seleccionar Mesa
-X)Volver al menu anterior
+1) Ver Mesas
+2) Levantar Mesa
+3) Seleccionar Mesa
+X) Volver al menu anterior
 #################################
 """)
     
@@ -30,65 +30,65 @@ def deliveryMenu():
     print("""[Menu Principal > Mesas > Delivery]
           
 ##########[ MENU DELIVERY ]##########
-1)Ver Pedidos
-2)Levantar Pedido
-3)Seleccionar Pedido
-X)Volver al menu anterior
+1) Ver Pedidos
+2) Levantar Pedido
+3) Seleccionar Pedido
+X) Volver al menu anterior
 #################################
 """)
     
 def seleccionarMesaMenu(numMesa):
     print(f"""
 #########[ OPERACIONES MESA {numMesa} ]#########
-1)Cobrar Mesa
-2)Anular Mesa
-3)Cambiar Mozo
-4)Mover Mesa
-5)Convertir hacia Delivery
-X)Cancelar Operacion
+1) Cobrar Mesa
+2) Anular Mesa
+3) Cambiar Mozo
+4) Mover Mesa
+5) Convertir hacia Delivery
+X) Cancelar Operacion
 #################################
 """)
     
 def seleccionarMesaMenu(numMesa):
     print(f"""
 #########[ OPERACIONES MESA {numMesa} ]#########
-1)Cobrar Mesa
-2)Anular Mesa
-3)Cambiar Mozo
-4)Mover Mesa
-5)Convertir hacia Delivery
-X)Cancelar Operacion
+1) Cobrar Mesa
+2) Anular Mesa
+3) Cambiar Mozo
+4) Mover Mesa
+5) Convertir hacia Delivery
+X) Cancelar Operacion
 #################################
 """)
     
 def seleccionarPedidoMenu(numMesa):
     print(f"""
 #########[ Operaciones Pedido {numMesa} ]#########
-1)Cobrar Pedido
-2)Anular Pedido
-3)Cambiar Mozo
-4)Convertir hacia Salon (No implementado)
-X)Cancelar Operacion
+1) Cobrar Pedido
+2) Anular Pedido
+3) Cambiar Mozo
+4) Convertir hacia Salon (No implementado)
+X) Cancelar Operacion
 #################################
 """)
     
 def metodoPagoMenu():
     print(f"""
 #########[ Metodo de Pago ]#########
-1)Efectivo
-2)Tarjeta Debito 
-3)Tarjeta Credito (10% de interes?)
-4)Cheque
-5)Deuda
-X)Cancelar Operacion
+1) Efectivo
+2) Tarjeta Debito 
+3) Tarjeta Credito
+4) Cheque
+5) Deuda
+X) Cancelar Operacion
 #################################
 """)
     
 def statsMenu(): #* Esto posiblemente lo borre mas adelante
     print("""
-1)Ver Estadisticas Generales
-2)Ver Estadisticas de Mesa
-X)Volver al menu anterior
+1) Ver Estadisticas Generales
+2) Ver Estadisticas de Mesa
+X) Volver al menu anterior
 """)
     
 def tableSettingsMenu(mesas): #! VALIDACIONES GRALES
@@ -132,19 +132,4 @@ def tableSettingsMenu(mesas): #! VALIDACIONES GRALES
         newTableQuantity = 0
         return mode,newTableQuantity
 
-    
-# def printMesaStats(stats):
-
-#     # for stat in range(len(stats)):
-#     #     print(stat)
-
-#     choice = int(input("Ingrese el numero de mesa a visualizar"))
-
-#     print(f"""
-# #########[ DATOS MESA {choice} ]#########
-# Veces Levantada: {stats[choice-1][0]}
-# Mozos Asignados:{printMozosMesa(stats[choice-1][1])}
-# Cant Productos Cargados: {stats[choice-1][2]}
-# Porcentaje de eleccion: algo%, que se divida la cant de veces levantada con el total de todas las mesas
-# """)
     

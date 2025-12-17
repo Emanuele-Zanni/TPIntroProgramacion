@@ -5,10 +5,10 @@ def mainMenu():
     print("""[Menu Principal]
           
 #######[ MENU PRINCIPAL ]#######
-1)Ver Mesas
-2)Ver Mozos
-3)Ver Stock
-4)Ver Caja
-5)Finalizar Dia
+1) Ver Mesas
+2) Ver Mozos
+3) Ver Productos
+4) Ver Caja
+5) Finalizar Dia
 #################################
 """)

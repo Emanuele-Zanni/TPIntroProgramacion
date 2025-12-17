@@ -42,7 +42,7 @@ def resetAllStats(statsMesas,statsDelivery,mozoStats,listaProductosVendidos,cant
     #? Variables de Mesas
     newStatsMesas = []
     for i in range(len(statsMesas)):
-        newStatSlot = [0,[],0]
+        newStatSlot = [0,[],0,0,0,0,0]
         newStatsMesas.append(newStatSlot)
     statsMesas = newStatsMesas
 

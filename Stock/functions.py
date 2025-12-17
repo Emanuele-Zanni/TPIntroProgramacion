@@ -98,9 +98,11 @@ def addProducto(listaProductos,prodStats):
     #* Validar Codigo, nombre (no repeat), precio > 0, cantidad=int
 
     if isProductValid:
-        print(f"{nombre} fue agregado.")
+        print(f"Producto '{nombre}' fue agregado correctamente.")
+        input("Presione enter para continuar...")
         listaProductos.append([codigo, nombre, precio, cantidad])
         prodStats.append([0, 0, 0, 0])
+        ordenarBubbleParalela(listaProductos,prodStats,"desc")
 
 
 def editProduct(listaProductos):
@@ -231,8 +233,8 @@ Esta seguro que desea eliminar el producto?
 2) Cancelar""")
             op = input("Ingrese una opcion: ")
             if op == "1":
-                listaProductos.remove(productoEncontrado)
                 prodStats.pop(listaProductos.index(productoEncontrado))
+                listaProductos.remove(productoEncontrado)
                 print(f"Producto eliminado exitosamente.")
                 input("Presione enter para continuar...")
             elif op == "2":

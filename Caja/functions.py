@@ -35,6 +35,7 @@ Cantidad de Mozos = {len(mozos)}
 
 
 def printInfoMozos(): 
+        clearConsole()
         print(f"""[Menu Principal > Caja > *Info Mozos*]
               
 #########[ INFO MOZOS ]#########
@@ -44,11 +45,158 @@ def printInfoMozos():
 -Opcion "2)" para ver lista completa de TODOS los mozos rankeados?
               
 1) Ver informacion de Mozo Particular
+2) Ver lista comparativa COMPLETA de Mozos
 X) Volver al Menu anterior
             
 ##################################
 """)
+        
 
+
+def listaComparativaMozos(listaMozos, mozoStats):
+    clearConsole()
+    print("[Menu Principal > Caja > Info Mozos > *Lista Comparativa Mozos*]")
+    print("")
+
+    # ---------- Construcción de filas de datos ----------
+    tabla = []
+
+    total_mesas_vendidas = calcTotalMesasVendidas(mozoStats)
+    total_pedidos_vendidos = calcTotalPedidosVendidos(mozoStats)
+
+    total_mesas_anuladas = calcTotalMesasAnuladas(mozoStats)
+    total_pedidos_anulados = calcTotalPedidosAnulados(mozoStats)
+
+    total_costo_anulaciones = calcTotalCostoAnulaciones(mozoStats)
+
+    total_cobrado_salon = calcTotalCobradoSalon(mozoStats)
+    total_cobrado_delivery = calcTotalCobradoDelivery(mozoStats)
+    total_cobrado_total = total_cobrado_salon + total_cobrado_delivery
+
+    for i in range(len(listaMozos)):
+        codigo = listaMozos[i][0]
+        nombre = listaMozos[i][1]
+        
+        mesas_cobradas      = mozoStats[i][0][0]
+        pedidos_cobrados    = mozoStats[i][1][0]
+
+        cobrado_salon       = mozoStats[i][0][1]
+        cobrado_delivery    = mozoStats[i][1][1]
+        total_cobrado       = cobrado_salon + cobrado_delivery
+
+        cant_anul_salon     = mozoStats[i][0][2]
+        cant_anul_delivery  = mozoStats[i][1][2]
+
+        dinero_anulado_salon    = mozoStats[i][0][3]
+        dinero_anulado_delivery = mozoStats[i][1][3]
+        total_anulado           = dinero_anulado_salon + dinero_anulado_delivery
+
+        fila = [
+            codigo,
+            nombre,
+            str(mesas_cobradas)     + f" ({pct(mesas_cobradas,     total_mesas_vendidas)}%)",
+            str(pedidos_cobrados)   + f" ({pct(pedidos_cobrados,   total_pedidos_vendidos)}%)",
+            str(cant_anul_salon)    + f" ({pct(cant_anul_salon,    total_mesas_anuladas)}%)",
+            str(cant_anul_delivery) + f" ({pct(cant_anul_delivery, total_pedidos_anulados)}%)",
+            f"{total_anulado}$"     + f" ({pct(total_anulado,      total_costo_anulaciones)}%)",
+            f"{cobrado_salon}$"     + f" ({pct(cobrado_salon,      total_cobrado_salon)}%)",
+            f"{cobrado_delivery}$"  + f" ({pct(cobrado_delivery,   total_cobrado_delivery)}%)",
+            f"{total_cobrado}$"     + f" ({pct(total_cobrado,      total_cobrado_total)}%)"
+        ]
+
+        tabla.append(fila)
+
+    # ---------- Header de 2 filas ----------
+    header_row1 = [
+        "Codigo", "Nombre", "Mesas", "Pedidos",
+        "Anul.", "Anul.",
+        "Total", "Cobrado", "Cobrado", "Total"
+    ]
+    header_row2 = [
+        "", "Mozo", "Cobradas", "Cobrados",
+        "Salon", "Delivery",
+        "Anulado", "Salon", "Delivery", "Cobrado"
+    ]
+
+    # ---------- Cálculo de anchos por columna ----------
+    cols = len(header_row1)
+    col_widths = []
+
+    for col in range(cols):
+        max_len = len(header_row1[col])
+        max_len = max(max_len, len(header_row2[col]))
+        for fila in tabla:
+            max_len = max(max_len, len(str(fila[col])))
+        # pequeño padding para que no quede pegado
+        col_widths.append(max_len + 2)
+
+    def format_row(values):
+        parts = []
+        for i, val in enumerate(values):
+            parts.append(str(val).ljust(col_widths[i]))
+        return " | ".join(parts)
+
+    total_width = sum(col_widths) + 3 * (cols - 1)
+
+    print("-" * ((total_width - len(" MOZOS ")) // 2) + " MOZOS " + "-" * ((total_width - len(" MOZOS ")) // 2))
+
+    # Header fila 1
+    print(format_row(header_row1))
+    # Header fila 2
+    print(format_row(header_row2))
+    print("-" * total_width)
+
+    # Filas de datos
+    for fila in tabla:
+        print(format_row(fila))
+
+    print("-" * total_width)
+    print("")
+    input("Ingrese enter para continuar...")
+
+
+def calcTotalMesasVendidas(mozoStats):
+    total = 0
+    for i in range(len(mozoStats)):
+        total += mozoStats[i][0][0]
+    return total
+
+def calcTotalPedidosVendidos(mozoStats):
+    total = 0
+    for i in range(len(mozoStats)):
+        total += mozoStats[i][1][0]
+    return total
+
+def calcTotalMesasAnuladas(mozoStats):
+    total = 0
+    for i in range(len(mozoStats)):
+        total += mozoStats[i][0][2]
+    return total
+
+def calcTotalPedidosAnulados(mozoStats):
+    total = 0
+    for i in range(len(mozoStats)):
+        total += mozoStats[i][1][2]
+    return total
+
+def calcTotalCostoAnulaciones(mozoStats):
+    total = 0
+    for i in range(len(mozoStats)):
+        total += mozoStats[i][0][3]
+        total += mozoStats[i][1][3]
+    return total
+
+def calcTotalCobradoSalon(mozoStats):
+    total = 0
+    for i in range(len(mozoStats)):
+        total += mozoStats[i][0][1]
+    return total
+
+def calcTotalCobradoDelivery(mozoStats):
+    total = 0
+    for i in range(len(mozoStats)):
+        total += mozoStats[i][1][1]
+    return total
 
 def infoMozosSubmenu(listaMozos,mozoStats):
     on = True
@@ -61,6 +209,8 @@ def infoMozosSubmenu(listaMozos,mozoStats):
         if choice == "1":
             on = False
             mozosVar = True
+        elif choice == "2":
+            listaComparativaMozos(listaMozos,mozoStats)
         elif choice == "X" or choice == "x":
             on = False
         else:
@@ -77,6 +227,12 @@ def infoMozosSubmenu(listaMozos,mozoStats):
 
         # print(f"Codigo de mozo = {codigoMozo}")
         # print(f"Numero de mozo = {numMozo}")
+
+        if nombreMozo == "x" or nombreMozo == "X":
+            print("El valor ingresado no puede estar vacio")
+            input("Presione enter para continuar...")
+            return
+
 
         if isName:
             print(f"Codigo de mozo = {codigoMozo}")
@@ -98,11 +254,11 @@ def infoMozosSubmenu(listaMozos,mozoStats):
             print("La opcion ingresada es invalida")
             input("Presione enter para volver al menu anterior...")
 
-def infoMesasSubmenu(mesas,statsMesas,dtc,cantPedidosVendidos,listaProductos,logs):
+def infoMesasSubmenu(mesas,statsMesas,prodStats,dtc,pedidosVendidos,pedidosAnulados,listaProductos,logs):
     on = True
     while on:
         clearConsole()
-        menus.printInfoMesas(mesas,statsMesas,dtc,cantPedidosVendidos)
+        menus.printInfoMesas(mesas,statsMesas,prodStats,dtc,pedidosVendidos,pedidosAnulados)
         choice = input("Ingrese una opcion: ")
         if choice == "1": #! Ver Estadisticas de Mesa
             printMesaStats(mesas,statsMesas)
@@ -148,27 +304,36 @@ lista de productos vendidos? c/u
 -prod menos vendido (por el mozo)
 """
 
-def printMesaStats(listaMesas,statsMesa):
+def printMesaStats(listaMesas,statsMesas):
     clearConsole()
     print(f"[Menu Principal > Caja > Info Mesas > *Estadisticas por Mesa*]")
     print("")
-    mesasVendidas = calcCantidadMesasSold(statsMesa)
+    mesasVendidas = calcCantidadMesasSold(statsMesas)
     table = input("Ingrese el numero de mesa a visualizar: ")
     isNumber,table = checkAndConvertToInt(table)
 
+    if table == "":
+        print("El valor ingresado no puede estar vacio")
+        input("Presione enter para continuar...")
+        return
+    elif isNumber == False:
+        print("La opcion ingresada debe ser un numero")
+        input("Presione enter para continuar...")
+        return
 
 
-    vecesLevantada = statsMesa[table-1][0]
+
+    vecesLevantada = statsMesas[table-1][0]
     print(f"""
 #########[ DATOS MESA {table} ]#########
 
 Veces Levantada: {vecesLevantada}
-Veces Anulada??:
-Dinero Recaudado en Mesa: xx$
-Dinero Anulado en Mesa: xx$
-Mozos Asignados:{printMozosMesa(statsMesa[table-1][1])}
-Cant Productos Cargados: {statsMesa[table-1][2]}
-Cant Productos Anulados: xx
+Veces Anulada: {statsMesas[table-1][6]}
+Dinero Recaudado en Mesa: {statsMesas[table-1][4]}$
+Dinero Anulado en Mesa: {statsMesas[table-1][5]}$
+Mozos Asignados:{printMozosMesa(statsMesas[table-1][1])}
+Cant Productos Cargados: {statsMesas[table-1][2]}
+Cant Productos Anulados: {statsMesas[table-1][3]}
 Porcentaje de eleccion: {vecesLevantada*100 / (mesasVendidas or 1)}%
 """)
     input("Presione enter para continuar...")
@@ -269,7 +434,25 @@ def calcCantidadMesasSold(statsMesa):
     # print(f"total de mesas vendidas = {total}")
     return total
 
-    
+def calcCantidadMesasAnuladas(statsMesa):
+    mesasAnuladas = 0
+    for i in range(len(statsMesa)):
+        mesasAnuladas += statsMesa[i][6]
+    return mesasAnuladas
+
+# def calcCantidadProductosAnulados(statsMesa):
+#     total = 0
+#     for i in range(len(statsMesa)):
+#         total += statsMesa[i][3]
+#     return total
+
+def calcCantidadProductosAnulados(prodStats):
+    cantAnuladaSalon = 0
+    cantAnuladaDelivery = 0
+    for i in range(len(prodStats)):
+        cantAnuladaSalon += prodStats[i][1]
+        cantAnuladaDelivery += prodStats[i][3]
+    return cantAnuladaSalon,cantAnuladaDelivery
 
 def calcProductosMasyMenosVendidos(listaProductos,listaProductosVendidos):
     CantidadProdsVendidos = len(listaProductosVendidos) #* Cantidad de productos vendidos total para calcular porcentajes
@@ -320,7 +503,7 @@ def calcProductosMasyMenosVendidos(listaProductos,listaProductosVendidos):
     #* Determinar producto mas vendido y devolver un texto con la info correcta segun el caso correspondiente (1 max vendido, 2 o 3 con mismo valor, 3 o mas con max valor)
     if len(masVendido) == 1: 
         item = getProduct(listaProductos, masVendido[0][0])
-        masVendidoText = f"Producto mas vendido: '{item[1]}' x {masVendido[0][1]} veces ({masVendido[0][1] * 100 / CantidadProdsVendidos}%)"
+        masVendidoText = f"Producto mas vendido: '{item[1]}' x {masVendido[0][1]} veces ({masVendido[0][1] * 100 / CantidadProdsVendidos}% de los ingresos totales)"
     else:
         if len(masVendido) > 3:
             diff = len(masVendido) - 3
@@ -331,7 +514,7 @@ def calcProductosMasyMenosVendidos(listaProductos,listaProductosVendidos):
                     masVendidoText += f"'{item[1]}'"
                 elif i != len(masVendido) - 1 and i < 3:
                     masVendidoText += f", '{item[1]}' "
-            masVendidoText += f"y {diff} productos mas x {masVendido[i][1]} veces ({masVendido[i][1] * 100 / CantidadProdsVendidos}%)"
+            masVendidoText += f"y {diff} productos mas x {masVendido[i][1]} veces ({masVendido[i][1] * 100 / CantidadProdsVendidos}% de los ingresos totales)"
         else:
             masVendidoText = "Productos mas vendidos: "
             for i in range(len(masVendido)):
@@ -342,13 +525,13 @@ def calcProductosMasyMenosVendidos(listaProductos,listaProductosVendidos):
                     masVendidoText += f"y '{item[1]}'"
                 else:
                     masVendidoText += f", '{item[1]}' "
-            masVendidoText += f" x {masVendido[i][1]} veces ({masVendido[i][1] * 100 / CantidadProdsVendidos}%)"
+            masVendidoText += f" x {masVendido[i][1]} veces ({masVendido[i][1] * 100 / CantidadProdsVendidos}% de los ingresos totales)"
 
 
     #* Determinar producto menos vendido y devolver un texto con la info correcta segun el caso correspondiente (1 min vendido, 2 o 3 con mismo valor, 3 o mas con min valor)
     if len(menosVendido) == 1: 
         item = getProduct(listaProductos, menosVendido[0][0])
-        menosVendidoText = f"Producto menos vendido: '{item[1]}' x {menosVendido[0][1]} veces ({menosVendido[0][1] * 100 / CantidadProdsVendidos}%)"
+        menosVendidoText = f"Producto menos vendido: '{item[1]}' x {menosVendido[0][1]} veces ({menosVendido[0][1] * 100 / CantidadProdsVendidos}% de los ingresos totales)"
     else:
         if len(menosVendido) > 3:
             diff = len(menosVendido) - 3
@@ -359,7 +542,7 @@ def calcProductosMasyMenosVendidos(listaProductos,listaProductosVendidos):
                     menosVendidoText += f"'{item[1]}'"
                 elif i != len(menosVendido) - 1 and i < 3:
                     menosVendidoText += f", '{item[1]}' "
-            menosVendidoText += f"y {diff} productos mas x {menosVendido[i][1]} veces ({menosVendido[i][1] * 100 / CantidadProdsVendidos}%)"
+            menosVendidoText += f"y {diff} productos mas x {menosVendido[i][1]} veces ({menosVendido[i][1] * 100 / CantidadProdsVendidos}% de los ingresos totales)"
         else:
             menosVendidoText = "Productos menos vendidos: "
             for i in range(len(menosVendido)):
@@ -370,6 +553,6 @@ def calcProductosMasyMenosVendidos(listaProductos,listaProductosVendidos):
                     menosVendidoText += f"y '{item[1]}'"
                 else:
                     menosVendidoText += f", '{item[1]}' "
-            menosVendidoText += f" x {menosVendido[i][1]} veces ({menosVendido[i][1] * 100 / CantidadProdsVendidos}%)"
+            menosVendidoText += f" x {menosVendido[i][1]} veces ({menosVendido[i][1] * 100 / CantidadProdsVendidos}% de los ingresos totales)"
     
     return masVendidoText,menosVendidoText

@@ -3,7 +3,8 @@ def isMozoValid(listaMozos, numMozo):
     for i in range(len(listaMozos)):
         if numMozo-1 != i and mozoValido==False:
             if i+1 == len(listaMozos):
-                print(f"Mozo {numMozo} no encontrado")
+                # print(f"Mozo {numMozo} no encontrado")
+                mozoValido=False
         else:
             mozoValido=True
             # print("Mozo seleccionado exitosamente!")

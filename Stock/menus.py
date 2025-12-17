@@ -8,11 +8,11 @@ def stockMenu(listaProductos,prodStats):
         print("""[Menu Principal > Stock]
               
 #########[ Menu Stock ]#########
-1)Ver productos
-2)Añadir productos
-3)Modificar productos
-4)Eliminar productos
-X)Volver al menú principal
+1) Ver productos
+2) Añadir productos
+3) Modificar productos
+4) Eliminar productos
+X) Volver al menú principal
 #################################
 """)
 
